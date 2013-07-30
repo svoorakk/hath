@@ -1,0 +1,93 @@
+<script>
+
+var DrawNumber = function() {}
+var showStatus = function() {}
+var showNumber = function() {}
+
+</script>
+<style>
+ul,ol { list-style:none }
+ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,body,html,p,blockquote,fieldset,input,dt,dd
+{ margin:0; padding:0 }
+
+
+.items
+{
+	text-align: center;
+}
+
+.items li
+{
+	float: center;
+	margin: 0px 5px 5px 0px;
+	text-transform: uppercase;
+}
+  
+.items li .outerContainer
+{
+	display: table;
+	height: 60%;
+	overflow: hidden;
+	width: 60%;
+	background-color: #EBEBEB;
+	border-bottom: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+}
+  
+.items li .outerContainer:Hover
+{
+	background-color: red;
+}
+
+.items li .outerContainer .innerContainer
+{
+	display: table-cell;
+	vertical-align: middle;
+	width: 100%;
+	margin: 0 auto;
+	text-align: center;
+}
+  
+.items li .outerContainer .innerContainer .element a
+{
+	color: #999999;
+	text-decoration: none;
+	padding: 0px 10px;
+	display: block;
+}
+  
+.items li .outerContainer:Hover .innerContainer .element a
+{
+	color: #FFFFFF;
+	text-decoration: none;  	  
+}
+
+.main {
+	border: medium inset #C0C0C0; 
+	margin-left: auto; 
+	margin-right: auto; 
+	width:60%; 
+	height:60%; 
+	margin-top:auto; 
+	margin-bottom:auto;
+	vertical-align:middle;
+	text-align:center;
+}
+</style>
+<body width="100%">
+  <div class="items">
+  <ul>
+  
+  <li>
+  <div class="outerContainer">
+  <div class="innerContainer">
+  <div class="element"><a href="#">Just one line</a></div>
+  </div>
+  </div>
+  </li>  
+  </ul>
+  </div>
+
+<div id="status">
+</div>
+</body>

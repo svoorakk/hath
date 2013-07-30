@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Welcome to Housie at Home</title>
+</head>
+<body class="jquery-ui home page page-id-33 page-template-default page-slug-index single-author singular">
+<input type="button" value="Test" id="tBtn"/>
+<div id="tickets" class="menu">Tickets</div>
+<div id="game" class="menu">Game</div>
+	<div id="radioset">
+		<input type="radio" id="radio1" name="radio" /><label for="radio1">Print Tickets</label>
+		<input type="radio" id="radio2" name="radio" checked="checked" /><label for="radio2">Draw Numbers</label>
+		<input type="radio" id="radio3" name="radio" /><label for="radio3">Play Game</label>
+	</div>
+</body>
+<script src="./scripts/lib/jquery-1.10.2.js"></script>
+<script src="./scripts/lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
+<link rel="stylesheet" href="./scripts/lib/jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.css"/>
+<script>
+$("#tBtn").button();
+$("#radioset").buttonset();
+$(".menu").button();
+</script>
+</html>
