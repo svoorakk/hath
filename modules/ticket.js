@@ -32,13 +32,13 @@ function Ticket(maxNo, rows, columns, numberCount) {
   while (j < this.numberCount) {
       num = Math.ceil(Math.random() * this.maxNo);
       col = Math.floor(num / fact);
-      if (num % fact == 0)
+      if (num % fact === 0)
           col = col - 1;
       vacancy = false;
       duplicate = false;
       home = 0;
       for (var k = 0; k < this.rows; k++) {
-          if (columns[col][k] == num)
+          if (columns[col][k] === num)
               duplicate = true;
           if (!(columns[col][k]) > 0) {
               vacancy = true;

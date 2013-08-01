@@ -3,18 +3,18 @@
  */
 "option strict";
 
-var Game = function (tag, pwd, maxNo) {
+var Game = function (tag, adminPwd, playerPwd, maxNo) {
 
     this.maxNo = maxNo;
-    this.pwd = pwd;
+    this.adminPwd = adminPwd;
+    this.playerPwd = playerPwd;
     this.tag = tag;
-    if (!maxNo)  //use default
-    	this.maxNo = 90;
+    this.maxNo = maxNo||90;
     this.gameFinished = false;
     this.gameStarted = false;
     this.gamePctFinished = 0;
-    this.drawnArr = new Array();
-    this.pendingArr = new Array();
+    this.drawnArr = [];
+    this.pendingArr = [];
     for (var i = 0; i < this.maxNo; i++) {
         this.pendingArr[i] = (i + 1);
     }
@@ -30,7 +30,7 @@ Game.prototype.drawNumber = function () {
         this.drawnArr[num - 1] = num;
         this.gamePctFinished = Math.round((1 - this.pendingArr.length / this.maxNo) * 100);
         this.gameStarted = true;
-        if (this.pendingArr.length == 0)
+        if (this.pendingArr.length === 0)
             this.gameFinished = true;
         result.number = num;
     }
