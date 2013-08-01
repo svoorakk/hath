@@ -105,9 +105,13 @@ housie.prototype.getTickets = function (tag, name, playerPwd) {
 
 housie.prototype.getTicketsForPrint = function (tag, adminPwd, qty, callback) {
 	var tickets = [];
-	var game = getGameAndValidateAccess(tag, 'Admin', adminPwd); 
-	if (game.error)
-		return game;
+	var game = {};
+	if (tag && tag.length === 0)
+		game = getGameAndValidateAccess(tag, 'Admin', adminPwd); 
+	if (game && game.error) {
+		callback(game);
+		return;
+	}
 	for (var i = 0; i < qty; i++) {
 		tickets.push(new Ticket());
 	}
@@ -133,10 +137,10 @@ function getGameAndValidateAccess(tag, accessType, inPwd, name) {
 		gamePwd = Game.adminPwd;
 	if (accessType === 'Player')
 		gamePwd = Game.playerPwd;
-	if (accessType === 'Player' && (!name || name.length === 0))
-		return {error:"Player name required."};
 	if (inPwd !== gamePwd)
 		return {error: 'Invalid ' + accessType + ' password.'};
+	if (accessType === 'Player' && (!name || name.length === 0))
+		return {error:"Player name required."};
 	return Game;	
 }
 

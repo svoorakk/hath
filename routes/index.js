@@ -58,7 +58,7 @@ exports.getTickets = function(req, res){
 
 exports.getTicketsForPrint = function(req, res) {
 	var tag = req.params.tag;
-	var adminPwd = req.query.adminPwd;
+	var adminPwd = req.query.adminpwd;
 	var qty = req.query.qty;
 	housie.getTicketsForPrint(tag, adminPwd, qty, function(result) {
 		res.send(result);

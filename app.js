@@ -30,8 +30,8 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
-app.get('/drawnumber/:tag', routes.drawNumber);
 app.get('/creategame/:tag', routes.createGame);
+app.get('/drawnumber/:tag', routes.drawNumber);
 app.get('/issueticket/:tag', routes.issueTicket);
 app.get('/confirmticket/:tag', routes.confirmTicket);
 app.get('/gettickets/:tag', routes.getTickets);
