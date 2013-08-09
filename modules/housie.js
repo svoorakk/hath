@@ -113,7 +113,12 @@ housie.prototype.getTicketsForPrint = function (tag, adminPwd, qty, callback) {
 		return;
 	}
 	for (var i = 0; i < qty; i++) {
-		tickets.push(new Ticket());
+		Ticket(null,null,null,null, function (err, result) {
+			tickets.push(result);
+		})
+	}
+	while (tickets.length !=qty) {
+		//console.log('XXXXXXXXXXXX');
 	}
 	if (game) {
 		var printTickets = game.printTickets;
