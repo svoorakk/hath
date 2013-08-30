@@ -1,8 +1,80 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+html {min-height:100%;position:relative}/* make sure it is at least as tall as the viewport */
+body {height:100%;background-color:lime;
+	  font-size:150%; font-family: verdana}
+h1 {font-size:400%; text-align:center;
+	font-family:"Brush Script MT", cursive;
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff2d95, 0 0 30px #ff2d95, 0 0 40px #ff2d95, 0 0 50px #ff2d95, 0 0 75px #ff2d95;
+	margin-top:0; margin-bottom:0;
+	cursor:pointer;
+	color:white;
+	opacity:.75}
+h1:hover {
+	opacity:.3
+}
+h2 {font-size:120%; text-align:center; margin-bottom:2%;}
+#main {
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    overflow:hidden;
+    height:100%;
+  	background-color:#A9E2F3;
+	vertical-align: middle;
 }
 
-a {
-  color: #00B7FF;
+#home {
+	height:90%;
+	width:90%;
+	margin-top:0%;
+	margin-left:auto;
+	margin-bottom:5%;
+	margin-right:5%;
+	padding:5px;
+	border-collapse:separate;
+	border-spacing:20px;
+}
+
+.mainBtn {
+	background-color:#00FFFF;
+	box-shadow:.6em .6em .3em 0px black;
+	cursor:pointer;
+	min-height:18%;
+	text-align:center;
+	width:100%;
+	padding:0%;
+	border-radius:4%;
+}
+.mainBtn:hover {
+	background-color:#04B4AE;
+	color:white;
+	box-shadow: .3em .3em 0em 0em black;
+	text-shadow: .1em 0.1em 0.1em black;
+}
+
+.mainBtn div {
+	padding:5%;
+}
+
+.panel1 {
+    border: .5em solid #00FFFF;
+    background-color: #00FFFF;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;	
+	width:90%;
+	margin:auto;
+	min-height:25%;
+}
+
+.panel2 {
+    border: .5em solid #B8CB99;
+    background-color: #B8CB99;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;	
+	width:90%;
+	margin:auto;
+	min-height:25%;
 }

@@ -30,14 +30,14 @@ app.configure('production', function(){
 // Routes
 
 app.get('/', routes.index);
-app.get('/creategame/:tag', routes.createGame);
-app.get('/drawnumber/:tag', routes.drawNumber);
-app.get('/issueticket/:tag', routes.issueTicket);
-app.get('/confirmticket/:tag', routes.confirmTicket);
-app.get('/gettickets/:tag', routes.getTickets);
-app.get('/discardticket/:tag', routes.discardTicket);
-app.get('/getticketsforprint', routes.getTicketsForPrint);
-app.get('/getticketsforprint/:tag', routes.getTicketsForPrint);
+app.post('/creategame/:tag', routes.createGame);
+app.post('/drawnumber/:tag', routes.drawNumber);
+app.post('/issueticket/:tag', routes.issueTicket);
+app.post('/confirmticket/:tag', routes.confirmTicket);
+app.post('/gettickets/:tag', routes.getTickets);
+app.post('/discardticket/:tag', routes.discardTicket);
+app.post('/getticketsforprint', routes.getTicketsForPrint);
+app.post('/getticketsforprint/:tag', routes.getTicketsForPrint);
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

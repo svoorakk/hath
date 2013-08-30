@@ -1,25 +1,127 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!doctype html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Welcome to Housie at Home</title>
+<title>housie@home</title>
+<link  rel="stylesheet" type="text/css"  href="stylesheets/style.css">
+<link  rel="stylesheet" type="text/css"  href="scripts/lib/jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css">
+<script type="text/javascript" src="scripts/lib/jquery-1.10.2.js"></script>
+<script type="text/javascript" src="scripts/lib/jquery.cookie-1.3.1.js"></script>
+<script type="text/javascript" src="scripts/lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript" src="scripts/hath.js"></script>
 </head>
-<body class="jquery-ui home page page-id-33 page-template-default page-slug-index single-author singular">
-<input type="button" value="Test" id="tBtn"/>
-<div id="tickets" class="menu">Tickets</div>
-<div id="game" class="menu">Game</div>
-	<div id="radioset">
-		<input type="radio" id="radio1" name="radio" /><label for="radio1">Print Tickets</label>
-		<input type="radio" id="radio2" name="radio" checked="checked" /><label for="radio2">Draw Numbers</label>
-		<input type="radio" id="radio3" name="radio" /><label for="radio3">Play Game</label>
-	</div>
-</body>
-<script src="./scripts/lib/jquery-1.10.2.js"></script>
-<script src="./scripts/lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.js"></script>
-<link rel="stylesheet" href="./scripts/lib/jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.css"/>
+<body onload="initPage();">
+    <div id="main">
+		<h1 onclick="$.cookie('currentScreen','home');initPage();">housie@home</h1>
+		<hr/>
+    	<div id="home">
+			<h2>Welcome to housie@home !</h2>
+			<div>
+			Here, you will find everything you need to run and play a game of Housie/Tambola/Bingo. 
+			If you would like to run a game please press the "Run a Game" button below. If you are a
+			player, please press the "Play a Game" button.
+			</div><br> 
+    		<div class="mainBtn" onclick="runBtnClick();">
+    			<div>Run a Game</div>
+    		</div>
+    		<div>&nbsp;</div>
+    		<div class="mainBtn" onclick="playBtnClick();">
+    			<div>Play a Game</div>
+    		</div>
+    	</div>
+    	<div id="run" class="panel1">
+			<h2>Run a Game</h2> 
+    		<div id="new"  class="panel2">
+    		<h3>Create a new game :</h3>
+    		Enter a tag for the Game : <input type="text" id="newTag" name="newTag" value="" 
+    									title="Enter a name for the game, which you can easily recall. If you forget this you cannot retrieve the game again.">
+    									<br>
+    		Enter a admin password for the Game : <input type="password" id="newAdminPwd" name="newAdminPwd" value=""
+    									title="Admin password is needed to run the game, print game tickets and draw the numbers. Do not share it with the players.">
+    									<br>
+    		Enter a player password for the Game : <input type="password" id="newPlayPwd" name="newPlayPwd" value=""
+    									title="Player password is needed for players to join a game, get tickets and to follow the game. Once game is created, share it with the players.">
+    									<br>
+    		<input type="button" value="Create" onclick="createGame();">
+    		</div>
+    		<div id="runTabs">
+			  	<ul>
+    				<li><a href="#tickets">Print Tickets</a></li>
+    				<li><a href="#draw">Draw Numbers</a></li>
+    				<li><a href="#status">View Status</a></li>
+  			  	</ul>
+  				<div id="tickets">
+  					Players who are online can join the game and get tickets using the 'Play' option from home page. However for 
+  					players who are not online you have an option to print tickets using the below option.
+  					<p>
+					Select number of tickets to print : 
+					Click to download PDF with tickets 
+					</p>
+  				</div>
+  				<div id="draw">
+					<div id="numberDisplay">
+					</div>
+					Draw
+  				</div>
+  				<div id="status">
+					Status of the Game :
+  				</div>
+			</div>
+    		<div>&nbsp;</div>
+    		<div id="current"  class="panel2">
+ 	   		<h3>Continue an existing game</h3>
+    		Select from list : <select id="runGameList"><option value=""></option></select>
+    		<input type="button" value="Continue" id="btnContinue"/>
+    		</div>
+    	</div>
+    	<div id="play" class="panel1">
+    	<h2>Play a game</h2>
+    		<div id="new" class="panel2">
+    		<h3>Join a game</h3>
+    		Enter a tag for the Game : <input type="text" id="newTag" name="newTag" value="" 
+    									title="Enter a name for the game, which you can easily recall. If you forget this you cannot retrieve the game again."><br>
+    		Enter a player password for the Game : <input type="password" id="newPlayPwd" name="newPlayPwd" value=""
+    									title="Player password is needed for players to join a game, get tickets and to follow the game. Once game is created, share it with the players."><br>
+    		<input type="button" value="Join">
+    		<br>
+    		</div>
+    		<div>&nbsp;</div>
+    		<div id="current" class="panel2">
+    		<h3>Continue a game</h3>
+    		Select from list : <select id="playGameList"><option value=""></option></select><br>
+    		<input type="button" value="Continue">
+    		</div>
+        		<div id="runTabs">
+			  	<ul>
+    				<li><a href="#tickets">Print Tickets</a></li>
+    				<li><a href="#draw">Draw Numbers</a></li>
+    				<li><a href="#status">View Status</a></li>
+  			  	</ul>
+  				<div id="tickets">
+  					Players who are online can join the game and get tickets using the 'Play' option from home page. However for 
+  					players who are not online you have an option to print tickets using the below option.
+  					<p>
+					Select number of tickets to print : 
+					Click to download PDF with tickets 
+					</p>
+  				</div>
+  				<div id="draw">
+					<div id="numberDisplay">
+					</div>
+					Draw
+  				</div>
+  				<div id="status">
+					Status of the Game :
+  				</div>
+			</div>	
+    	</div>
+    	<div id="status">
+    	
+    	
+    	</div>
+    </div>
 <script>
-$("#tBtn").button();
-$("#radioset").buttonset();
-$(".menu").button();
+$("input[type=button]").button();
+$("#runTabs").tabs().hide();
 </script>
+</body>
 </html>
