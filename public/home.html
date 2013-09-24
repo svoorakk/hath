@@ -70,18 +70,20 @@
     		<div id="current"  class="panel2">
  	   		<h3>Continue an existing game</h3>
     		Select from list : <select id="runGameList"><option value=""></option></select>
-    		<input type="button" value="Continue" id="btnContinue"/>
+    		<input type="button" value="Continue" id="btnContinue" onclick="continueRunGame(document.getElementById('runGameList').value);"/>
     		</div>
     	</div>
     	<div id="play" class="panel1">
     	<h2>Play a game</h2>
     		<div id="new" class="panel2">
     		<h3>Join a game</h3>
-    		Enter a tag for the Game : <input type="text" id="newTag" name="newTag" value="" 
-    									title="Enter a name for the game, which you can easily recall. If you forget this you cannot retrieve the game again."><br>
-    		Enter a player password for the Game : <input type="password" id="newPlayPwd" name="newPlayPwd" value=""
-    									title="Player password is needed for players to join a game, get tickets and to follow the game. Once game is created, share it with the players."><br>
-    		<input type="button" value="Join">
+    		Enter the tag for the Game you want to join : <input type="text" id="joinTag" name="playTag" value="" 
+    									title="Enter the tag for the Game you want to join. If you don't know this you, talk to the organizer of the Game."><br>
+    		Enter your name : <input type="text" id="playName" name="joinName" value="" 
+    									title="Enter your name. Make sure it is unique so that organizer and other players can easily recognize you."><br>
+    		Enter a player password for the Game : <input type="password" id="newPlayPwd" name="joinPwd" value=""
+    									title="Player password is needed for players to join a game & get tickets. If you do not know this please contact the organizer."><br>
+    		<input type="button" value="Join" onclick="joinGame();">
     		<br>
     		</div>
     		<div>&nbsp;</div>

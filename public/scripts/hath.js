@@ -38,19 +38,19 @@ var initPage = function() {
 	$("#run").hide();
 	$("#play").hide();
 	$("#"+$.cookie("currentScreen")).show();
+	setupRunPanel();
+	setupPlayPanel();
 	resetRunPanel();
 };
 
 var runBtnClick = function () {
 	$.cookie("currentScreen","run");
 	initPage();
-	setupRunPanel();
 };
 
 var playBtnClick = function () {
 	$.cookie("currentScreen","play");
 	initPage();
-	setupPlayPanel();
 };
 
 var createGame = function() {
@@ -72,12 +72,22 @@ var createGame = function() {
 		}
 		//create browser variable
 		addGame(game, 'run');
-		//display next screen
-		//update status panel
-		$("#new").hide();
-		$("#current").hide();
-		$("#runTabs").show();
+		setupRunTabs(game);
 	});
+};
+
+var setupRunTabs = function(game) {
+	$.cookie("currentGame", game.tag);
+	//display next screen
+	$("#new").hide();
+	$("#current").hide();
+	$("#runTabs").show();
+	//update status panel
+};
+
+var continueRunGame = function(tag) {
+	var game = getGames('run')[tag];
+	setupRunTabs(game);
 };
 
 var resetRunPanel = function() {
@@ -154,3 +164,25 @@ var populateGameList = function(target, games) {
 		target.add(o, null);
 	}
 };
+
+var joinGame = function() {
+	var tag = document.getElementById("joinGame");
+	var name = document.getElementById("joinName");
+	var pwd = document.getElementById("joinPwd");
+	var url = "validatejoin/"+tag;
+	var body = {};
+	body.playername = name;
+	body.playerpwd = pwd;	
+	//display wait animation
+	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
+		game = JSON.parse(game);
+		if (game.error) {
+			alert(game.error);
+			return;
+		}
+		//create browser variable
+		addGame(game, 'play');
+		alert("Joined Game!")
+		setupPlayTabs(game);
+	});
+}

@@ -32,6 +32,7 @@ app.configure('production', function(){
 app.get('/', routes.index);
 app.post('/creategame/:tag', routes.createGame);
 app.post('/drawnumber/:tag', routes.drawNumber);
+app.post('/validatejoin/:tag', routes.validateJoin);
 app.post('/issueticket/:tag', routes.issueTicket);
 app.post('/confirmticket/:tag', routes.confirmTicket);
 app.post('/gettickets/:tag', routes.getTickets);

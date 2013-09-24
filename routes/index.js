@@ -11,55 +11,65 @@ exports.index = function(req, res){
 
 //rest api
 exports.createGame = function(req, res){
+	console.log('req.connection.remotePort', req.connection.remotePort);
+	console.log('req.connection.remoteAddress', req.connection.remoteAddress);
+	console.log('req.headers', req.headers);
 	var tag = req.params.tag;
-	var adminPwd = req.query.adminpwd;
-	var playerPwd = req.query.playerpwd;
-	var maxNos = req.query.maxnos;
+	var adminPwd = req.body.adminpwd;
+	var playerPwd = req.body.playerpwd;
+	var maxNos = req.body.maxnos;
 	res.send(housie.createGame(tag, adminPwd, playerPwd, maxNos));
 };
 
 exports.drawNumber = function(req, res){
 	var tag = req.params.tag;
-	var adminPwd = req.query.admipwd;
+	var adminPwd = req.body.admipwd;
 	res.send(housie.drawNumber(tag, adminPwd));
+};
+
+exports.validateJoin = function(req, res){
+	var tag = req.params.tag;
+	var playerName = req.body.playername;
+	var playerPwd = req.body.playerpwd;
+	res.send(housie.validateJoin(tag, playerPwd, playerName));
 };
 
 exports.issueTicket = function(req, res){
 	var tag = req.params.tag;
-	var name = req.query.name;
-	var playerPwd = req.query.playerpwd;
-	var maxNo = req.query.maxno;
-	var rows = req.query.rows;
-	var columns = req.query.columns;
-	var numberCount = req.query.numcount;
+	var name = req.body.name;
+	var playerPwd = req.body.playerpwd;
+	var maxNo = req.body.maxno;
+	var rows = req.body.rows;
+	var columns = req.body.columns;
+	var numberCount = req.body.numcount;
 	res.send(housie.issueTicket(tag, name, playerPwd, maxNo, rows, columns, numberCount));
 };
 
 exports.discardTicket = function(req, res){
 	var tag = req.params.tag;
-	var name = req.query.name;
-	var playerPwd = req.query.playerpwd;
+	var name = req.body.name;
+	var playerPwd = req.body.playerpwd;
 	res.send(housie.discardTicket(tag, name, playerPwd));
 };
 
 exports.confirmTicket = function(req, res){
 	var tag = req.params.tag;
-	var name = req.query.name;
-	var playerPwd = req.query.playerpwd;
+	var name = req.body.name;
+	var playerPwd = req.body.playerpwd;
 	res.send(housie.confirmTicket(tag, name, playerPwd));
 };
 
 exports.getTickets = function(req, res){
 	var tag = req.params.tag;
-	var name = req.query.name;
-	var playerPwd = req.query.playerpwd;
+	var name = req.body.name;
+	var playerPwd = req.body.playerpwd;
 	res.send(housie.getTickets(tag, name, playerPwd));
 };
 
 exports.getTicketsForPrint = function(req, res) {
 	var tag = req.params.tag;
-	var adminPwd = req.query.adminpwd;
-	var qty = req.query.qty;
+	var adminPwd = req.body.adminpwd;
+	var qty = req.body.qty;
 	housie.getTicketsForPrint(tag, adminPwd, qty, function(result) {
 		res.send(result);
 	});

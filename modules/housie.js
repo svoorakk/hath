@@ -20,6 +20,17 @@ housie.prototype.drawNumber = function(tag, adminPwd) {
 		return game.drawNumber();
 };
 
+housie.prototype.validateJoin = function(tag, playerPwd, playerName) {
+	var game = getGameAndValidateAccess(tag, 'Player', playerPwd, playerName); 
+	if (game.error)
+		return game;
+	if (game.gameStarted)
+		return {'error': 'Game already commenced. New players cannot join after the commencement of the game.'};
+	game.tickets[playerName] = [];
+	db.put('game', tag, game);
+	return game;
+};
+
 housie.prototype.createGame = function (tag, adminPwd, playerPwd, maxNo) {
 	if (!tag || tag.length === 0) {
 		return {error:"Game 'tag' needed to create game."};
@@ -81,6 +92,9 @@ housie.prototype.confirmTicket = function (tag, name, playerPwd) {
 	var game = getGameAndValidateAccess(tag, 'Player', playerPwd, name); 
 	if (game.error)
 		return game;
+	if (game.gameStarted) {
+		return {error:'Game already commenced. New tickets cannot be issued after the commencement of the game'};
+	}
 	var ticket_tag = tag + '_' + name;
 	var pending_tickets = db.get('ticket', ticket_tag);
 	if (!pending_tickets)
@@ -92,6 +106,7 @@ housie.prototype.confirmTicket = function (tag, name, playerPwd) {
 		current_tickets = [];
 	current_tickets = current_tickets.concat(pending_tickets);
 	game.tickets[name] = current_tickets;
+	db.put('game', tag, game);
 	db.put('ticket', ticket_tag, []);
 	return {message: 'Tickets confirmed. Total tickets count for ' + name + ' in game ' + tag + ' is ' + current_tickets.length};
 };
@@ -146,6 +161,9 @@ function getGameAndValidateAccess(tag, accessType, inPwd, name) {
 		return {error: 'Invalid ' + accessType + ' password.'};
 	if (accessType === 'Player' && (!name || name.length === 0))
 		return {error:"Player name required."};
+	if ((accessType === "Player") && game.gameStarted === true)
+		if (!game.tickets[name])
+			return {error:"Player cannot join after Game has started."};
 	return Game;	
 }
 
