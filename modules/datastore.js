@@ -16,6 +16,11 @@ Datastore.prototype.put = function (collection, id, item) {
 	memory[collection][id] = item;
 };
 
+Datastore.prototype.remove = function (collection, id) {
+	if (memory[collection] && memory[collection][id])
+		delete memory[collection][id];
+};
+
 module.exports = function () {
 	return new Datastore();
 }

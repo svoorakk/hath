@@ -11,10 +11,11 @@ exports.index = function(req, res){
 
 //rest api
 exports.createGame = function(req, res){
-	console.log('req.connection.remotePort', req.connection.remotePort);
-	console.log('req.connection.remoteAddress', req.connection.remoteAddress);
-	console.log('req.headers', req.headers);
+	//console.log('req.connection.remotePort', req.connection.remotePort);
+	//console.log('req.connection.remoteAddress', req.connection.remoteAddress);
+	//console.log('req.headers', req.headers);
 	var tag = req.params.tag;
+	console.log(tag);
 	var adminPwd = req.body.adminpwd;
 	var playerPwd = req.body.playerpwd;
 	var maxNos = req.body.maxnos;
@@ -29,6 +30,7 @@ exports.drawNumber = function(req, res){
 
 exports.validateJoin = function(req, res){
 	var tag = req.params.tag;
+	console.log(tag);
 	var playerName = req.body.playername;
 	var playerPwd = req.body.playerpwd;
 	res.send(housie.validateJoin(tag, playerPwd, playerName));

@@ -10,34 +10,30 @@ var Game = function (tag, adminPwd, playerPwd, maxNo) {
     this.playerPwd = playerPwd;
     this.tag = tag;
     this.maxNo = maxNo||90;
-    this.gameFinished = false;
+    this.finished = false;
     this.gameStarted = false;
     this.gamePctFinished = 0;
-    this.drawnArr = [];
-    this.pendingArr = [];
+    this.drawnNumbers = [];
+    this.pendingNumbers = [];
     for (var i = 0; i < this.maxNo; i++) {
-        this.pendingArr[i] = (i + 1);
+        this.pendingNumbers[i] = (i + 1);
     }
     return this;
 };
 
 Game.prototype.drawNumber = function () {
-	var result = {tag: this.tag};
     //Draw number from remaining numbers
-    if (!this.gameFinished) {
-        var idx = Math.floor(Math.random() * this.pendingArr.length);
-        var num = this.pendingArr.splice(idx, 1)[0];
-        this.drawnArr[num - 1] = num;
-        this.gamePctFinished = Math.round((1 - this.pendingArr.length / this.maxNo) * 100);
+    if (!this.finished) {
+        var idx = Math.floor(Math.random() * this.pendingNumbers.length);
+        var num = this.pendingNumbers.splice(idx, 1)[0];
+        this.drawnNumbers[num - 1] = num;
+        this.gamePctFinished = Math.round((1 - this.pendingNumbers.length / this.maxNo) * 100);
         this.gameStarted = true;
-        if (this.pendingArr.length === 0)
-            this.gameFinished = true;
-        result.number = num;
+        if (this.pendingNumbers.length === 0)
+            this.finished = true;
+        this.number = num;
     }
-    result.pendingNumbers = this.pendingArr;
-    result.drawnNumbers = this.drawnArr;
-    result.gameFinished = this.gameFinished;
-    return result;
+    return this;
 };
 
 module.exports = Game;

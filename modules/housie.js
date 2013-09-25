@@ -16,8 +16,12 @@ housie.prototype.drawNumber = function(tag, adminPwd) {
 	var game = getGameAndValidateAccess(tag, 'Admin', adminPwd); 
 	if (game.error)
 		return game;
-	else
-		return game.drawNumber();
+	else {
+		game = game.drawNumber();
+		db.put('game', game.tag, game);
+		return getGameForClient(game);
+	}
+	
 };
 
 housie.prototype.validateJoin = function(tag, playerPwd, playerName) {
@@ -26,9 +30,13 @@ housie.prototype.validateJoin = function(tag, playerPwd, playerName) {
 		return game;
 	if (game.gameStarted)
 		return {'error': 'Game already commenced. New players cannot join after the commencement of the game.'};
+	if (game.tickets && game.tickets[playerName])
+		return {'error': 'Player already joined or another player with same name is already in the game.'};
+	if (!game.tickets)
+		game.tickets = {};
 	game.tickets[playerName] = [];
 	db.put('game', tag, game);
-	return game;
+	return getGameForClient(game);
 };
 
 housie.prototype.createGame = function (tag, adminPwd, playerPwd, maxNo) {
@@ -48,7 +56,7 @@ housie.prototype.createGame = function (tag, adminPwd, playerPwd, maxNo) {
 	else {
 		game = new Game(tag, adminPwd, playerPwd, maxNo);
 		db.put('game', tag, game);
-	    return {tag:game.tag, pendingNumbers:game.pendingArr, drawnNumbers:game.drawnArr, finished:game.gameFinished};
+		return getGameForClient(game);
 	}
 };
 
@@ -93,7 +101,7 @@ housie.prototype.confirmTicket = function (tag, name, playerPwd) {
 	if (game.error)
 		return game;
 	if (game.gameStarted) {
-		return {error:'Game already commenced. New tickets cannot be issued after the commencement of the game'};
+		return {error:'Game already commenced. Tickets cannot be confirmed after the commencement of the game'};
 	}
 	var ticket_tag = tag + '_' + name;
 	var pending_tickets = db.get('ticket', ticket_tag);
@@ -127,10 +135,11 @@ housie.prototype.getTicketsForPrint = function (tag, adminPwd, qty, callback) {
 		callback(game);
 		return;
 	}
+	var cb = function (err, result) {
+		tickets.push(result);
+	};
 	for (var i = 0; i < qty; i++) {
-		Ticket(null,null,null,null, function (err, result) {
-			tickets.push(result);
-		})
+		Ticket(null,null,null,null, cb);
 	}
 	while (tickets.length !=qty) {
 		//console.log('XXXXXXXXXXXX');
@@ -142,6 +151,7 @@ housie.prototype.getTicketsForPrint = function (tag, adminPwd, qty, callback) {
 		printTickets = printTickets.concat(tickets);
 		game.printTickets = printTickets;
 	}
+	db.put('game', game.tag, game);
 	callback(tickets);
 };
 
@@ -161,11 +171,18 @@ function getGameAndValidateAccess(tag, accessType, inPwd, name) {
 		return {error: 'Invalid ' + accessType + ' password.'};
 	if (accessType === 'Player' && (!name || name.length === 0))
 		return {error:"Player name required."};
-	if ((accessType === "Player") && game.gameStarted === true)
+	if ((accessType === "Player") && Game.gameStarted === true)
 		if (!game.tickets[name])
 			return {error:"Player cannot join after Game has started."};
 	return Game;	
 }
+
+var getGameForClient = function(game) {
+    var outGame = {tag:game.tag, pendingNumbers:game.pendingNumbers, drawnNumbers:game.drawnNumbers, finished:game.finished};
+    if (game.number)
+    	outGame.number = game.number;
+    return outGame;
+};
 
 module.exports = function () {
 	return new housie();
