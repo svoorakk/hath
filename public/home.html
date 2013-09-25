@@ -30,7 +30,7 @@
     	</div>
     	<div id="run" class="panel1">
 			<h2>Run a Game</h2> 
-    		<div id="new"  class="panel2">
+    		<div id="runNew"  class="panel2">
     		<h3>Create a new game :</h3>
     		Enter a tag for the Game : <input type="text" id="newTag" name="newTag" value="" 
     									title="Enter a name for the game, which you can easily recall. If you forget this you cannot retrieve the game again.">
@@ -67,7 +67,7 @@
   				</div>
 			</div>
     		<div>&nbsp;</div>
-    		<div id="current"  class="panel2">
+    		<div id="runCurrent"  class="panel2">
  	   		<h3>Continue an existing game</h3>
     		Select from list : <select id="runGameList"><option value=""></option></select>
     		<input type="button" value="Continue" id="btnContinue" onclick="continueRunGame(document.getElementById('runGameList').value);"/>
@@ -75,43 +75,41 @@
     	</div>
     	<div id="play" class="panel1">
     	<h2>Play a game</h2>
-    		<div id="new" class="panel2">
+    		<div id="playNew" class="panel2">
     		<h3>Join a game</h3>
-    		Enter the tag for the Game you want to join : <input type="text" id="joinTag" name="playTag" value="" 
+    		Enter the tag for the Game you want to join : <input type="text" id="joinTag" name="joinTag" value="" 
     									title="Enter the tag for the Game you want to join. If you don't know this you, talk to the organizer of the Game."><br>
-    		Enter your name : <input type="text" id="playName" name="joinName" value="" 
+    		Enter your name : <input type="text" id="joinName" name="joinName" value="" 
     									title="Enter your name. Make sure it is unique so that organizer and other players can easily recognize you."><br>
-    		Enter a player password for the Game : <input type="password" id="newPlayPwd" name="joinPwd" value=""
+    		Enter a player password for the Game : <input type="password" id="joinPwd" name="joinPwd" value=""
     									title="Player password is needed for players to join a game & get tickets. If you do not know this please contact the organizer."><br>
-    		<input type="button" value="Join" onclick="joinGame();">
+    		<input type="button" value="Join" onclick="joinGame(true);">
     		<br>
     		</div>
     		<div>&nbsp;</div>
-    		<div id="current" class="panel2">
+    		<div id="playCurrent" class="panel2">
     		<h3>Continue a game</h3>
     		Select from list : <select id="playGameList"><option value=""></option></select><br>
-    		<input type="button" value="Continue">
+    		<input type="button" value="Continue" onclick="joinGame(false);">
     		</div>
-        		<div id="runTabs">
+        		<div id="playTabs">
 			  	<ul>
-    				<li><a href="#tickets">Print Tickets</a></li>
-    				<li><a href="#draw">Draw Numbers</a></li>
-    				<li><a href="#status">View Status</a></li>
+    				<li><a href="#buy">Get Tickets</a></li>
+    				<li><a href="#tickets">View Tickets</a></li>
+    				<li><a href="#playStatus">Play Status</a></li>
   			  	</ul>
-  				<div id="tickets">
-  					Players who are online can join the game and get tickets using the 'Play' option from home page. However for 
-  					players who are not online you have an option to print tickets using the below option.
+  				<div id="buy">
+  					Get Ticket.
   					<p>
-					Select number of tickets to print : 
-					Click to download PDF with tickets 
+					Confirm
+					Discard
 					</p>
+					Count
   				</div>
-  				<div id="draw">
-					<div id="numberDisplay">
-					</div>
-					Draw
+  				<div id="tickets">
+					Tickets
   				</div>
-  				<div id="status">
+  				<div id="playStatus">
 					Status of the Game :
   				</div>
 			</div>	
@@ -124,6 +122,7 @@
 <script>
 $("input[type=button]").button();
 $("#runTabs").tabs().hide();
+$("#playTabs").tabs().hide();
 </script>
 </body>
 </html>

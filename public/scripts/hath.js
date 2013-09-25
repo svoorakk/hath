@@ -79,9 +79,18 @@ var createGame = function() {
 var setupRunTabs = function(game) {
 	$.cookie("currentGame", game.tag);
 	//display next screen
-	$("#new").hide();
-	$("#current").hide();
+	$("#runNew").hide();
+	$("#runCurrent").hide();
 	$("#runTabs").show();
+	//update status panel
+};
+
+var setupPlayTabs = function(game) {
+	$.cookie("currentGame", game.tag);
+	//display next screen
+	$("#playNew").hide();
+	$("#playCurrent").hide();
+	$("#playTabs").show();
 	//update status panel
 };
 
@@ -165,24 +174,32 @@ var populateGameList = function(target, games) {
 	}
 };
 
-var joinGame = function() {
-	var tag = document.getElementById("joinGame");
-	var name = document.getElementById("joinName");
-	var pwd = document.getElementById("joinPwd");
-	var url = "validatejoin/"+tag;
-	var body = {};
-	body.playername = name;
-	body.playerpwd = pwd;	
-	//display wait animation
-	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
-		game = JSON.parse(game);
-		if (game.error) {
-			alert(game.error);
-			return;
-		}
-		//create browser variable
-		addGame(game, 'play');
-		alert("Joined Game!")
+var joinGame = function(New) {
+	if (New) {
+		var tag = document.getElementById("joinTag").value;
+		var name = document.getElementById("joinName").value;
+		var pwd = document.getElementById("joinPwd").value;
+		var url = "validatejoin/"+tag;
+		var body = {};
+		body.playername = name;
+		body.playerpwd = pwd;	
+		//display wait animation
+		alert((body));
+		xmlHttpPost(url, JSON.stringify(body), function(err, game) {
+			game = JSON.parse(game);
+			if (game.error) {
+				alert(game.error);
+				return;
+			}
+			//create browser variable
+			addGame(game, 'play');
+			alert("Joined Game!")
+			setupPlayTabs(game);
+		});
+	}
+	else {
+		var tag = document.getElementById("playGameList").value;
+		var game = getGames('play')[tag];
 		setupPlayTabs(game);
-	});
+	}
 }
