@@ -135,9 +135,6 @@ var xmlHttpPost = function (strURL, body, callback) {
 	self.xmlHttpReq.send(body);
 };
 
-
-
-
 //screen setup
 var setupRunPanel = function() {
 	//from cookies, get any currently pending game(s)
@@ -178,11 +175,13 @@ var joinGame = function(New) {
 	if (New) {
 		var tag = document.getElementById("joinTag").value;
 		var name = document.getElementById("joinName").value;
-		var pwd = document.getElementById("joinPwd").value;
+		var gamePwd = document.getElementById("joinGamePwd").value;
+		var playerPwd = document.getElementById("joinPlayerPwd").value;
 		var url = "validatejoin/"+tag;
 		var body = {};
 		body.playername = name;
-		body.playerpwd = pwd;	
+		body.gamepwd = gamePwd;	
+		body.playerpwd = playerPwd;	
 		//display wait animation
 		alert((body));
 		xmlHttpPost(url, JSON.stringify(body), function(err, game) {
@@ -192,8 +191,9 @@ var joinGame = function(New) {
 				return;
 			}
 			//create browser variable
+			game.playerPwd = pwd;
+			game.playerName = name;
 			addGame(game, 'play');
-			alert("Joined Game!")
 			setupPlayTabs(game);
 		});
 	}
@@ -202,4 +202,23 @@ var joinGame = function(New) {
 		var game = getGames('play')[tag];
 		setupPlayTabs(game);
 	}
+}
+
+var getTicket = function () {
+	var tag = $.cookie("currentGame")
+	alert(tag);
+	var game = getGames('play')[tag];
+	var url = "issueticket/"+tag;
+	var body = {};
+	body.name = game.playerName;
+	body.playerpwd = game.playerPwd;
+	alert(JSON.stringify(body));
+	xmlHttpPost(url, JSON.stringify(body), function(err, tickets) {
+		tickets = JSON.parse(tickets);
+		if (tickets.error) {
+			alert(tickets.error);
+			return;
+		}
+		alert(tickets);
+	});
 }

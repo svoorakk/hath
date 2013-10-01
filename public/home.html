@@ -81,8 +81,10 @@
     									title="Enter the tag for the Game you want to join. If you don't know this you, talk to the organizer of the Game."><br>
     		Enter your name : <input type="text" id="joinName" name="joinName" value="" 
     									title="Enter your name. Make sure it is unique so that organizer and other players can easily recognize you."><br>
-    		Enter a player password for the Game : <input type="password" id="joinPwd" name="joinPwd" value=""
-    									title="Player password is needed for players to join a game & get tickets. If you do not know this please contact the organizer."><br>
+    		Enter your password : <input type="password" id="joinPlayerPwd" name="joinPlayerPwd" value=""
+    									title="Player password is needed for players to join and access a game."><br>
+    		Enter a Game password : <input type="password" id="joinGamePwd" name="joinGamePwd" value=""
+    									title="Game password is needed for players to join a game & get tickets. If you do not know this please contact the organizer."><br>
     		<input type="button" value="Join" onclick="joinGame(true);">
     		<br>
     		</div>
@@ -99,12 +101,14 @@
     				<li><a href="#playStatus">Play Status</a></li>
   			  	</ul>
   				<div id="buy">
-  					Get Ticket.
-  					<p>
-					Confirm
-					Discard
-					</p>
-					Count
+  					<input type="button" onclick="getTicket();" value="Get Ticket">
+  					<div id="newticket">
+	  					<div id="newTicketDisplay">
+   							<input type="button" onclick="confirmTicket()" value="Confirm Ticket">
+  							<input type="button" onclick="discardTicket()" value="Discard Ticket">
+  						</div>
+  					</div>
+  					<div id="ticketCount">Tickets you already have for this game : </div>
   				</div>
   				<div id="tickets">
 					Tickets
@@ -123,6 +127,7 @@
 $("input[type=button]").button();
 $("#runTabs").tabs().hide();
 $("#playTabs").tabs().hide();
+$("#newticket").hide();
 </script>
 </body>
 </html>

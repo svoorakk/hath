@@ -19,27 +19,33 @@ housie.prototype.drawNumber = function(tag, adminPwd) {
 	else {
 		game = game.drawNumber();
 		db.put('game', game.tag, game);
-		return getGameForClient(game);
+		return getGameForPlayer(game);
 	}
 	
 };
 
-housie.prototype.validateJoin = function(tag, playerPwd, playerName) {
-	var game = getGameAndValidateAccess(tag, 'Player', playerPwd, playerName); 
+housie.prototype.validateJoin = function(tag, playPwd, playerPwd, playerName) {
+	var game = getGameAndValidateAccess(tag, 'Player', playPwd, playerName); 
 	if (game.error)
 		return game;
 	if (game.gameStarted)
 		return {'error': 'Game already commenced. New players cannot join after the commencement of the game.'};
-	if (game.tickets && game.tickets[playerName])
-		return {'error': 'Player already joined or another player with same name is already in the game.'};
-	if (!game.tickets)
-		game.tickets = {};
-	game.tickets[playerName] = [];
+	if (game.players && game.players[playerName])
+		if (playerPwd != game.players[playerName].password)
+			return {'error': 'Player password incorrect.'};
+	if (!game.players) 
+		game.players = {};
+	if (!game.players[playerName]) {
+		player = {};
+		player.password = playerPwd;
+		player.tickets = [];
+		game.players[playerName] = player;
+	}
 	db.put('game', tag, game);
-	return getGameForClient(game);
+	return getGameForPlayer(game);
 };
 
-housie.prototype.createGame = function (tag, adminPwd, playerPwd, maxNo) {
+housie.prototype.createGame = function (tag, adminPwd, playPwd, maxNo) {
 	if (!tag || tag.length === 0) {
 		return {error:"Game 'tag' needed to create game."};
 	}
@@ -50,18 +56,18 @@ housie.prototype.createGame = function (tag, adminPwd, playerPwd, maxNo) {
 	if (!adminPwd) {
 		return {error: 'An administrator password is needed to create a game.'};
 	}
-	if (!playerPwd) {
+	if (!playPwd) {
 		return {error: 'A player password is needed to create a game.'};
 	}
 	else {
-		game = new Game(tag, adminPwd, playerPwd, maxNo);
+		game = new Game(tag, adminPwd, playPwd, maxNo);
 		db.put('game', tag, game);
-		return getGameForClient(game);
+		return getGameForPlayer(game);
 	}
 };
 
-housie.prototype.issueTicket = function (tag, name, playerPwd, maxNo, rows, columns, numberCount) {
-	var game = getGameAndValidateAccess(tag, 'Player', playerPwd, name); 
+housie.prototype.issueTicket = function (tag, name, playPwd, maxNo, rows, columns, numberCount) {
+	var game = getGameAndValidateAccess(tag, 'Player', playPwd, name); 
 	if (game.error)
 		return game;
 	if (game.gameStarted) {
@@ -82,8 +88,8 @@ housie.prototype.issueTicket = function (tag, name, playerPwd, maxNo, rows, colu
 	return tickets;
 };
 
-housie.prototype.discardTicket = function (tag, name, playerPwd) {
-	var game = getGameAndValidateAccess(tag, 'Player', playerPwd, name); 
+housie.prototype.discardTicket = function (tag, name, playPwd) {
+	var game = getGameAndValidateAccess(tag, 'Player', playPwd, name); 
 	if (game.error)
 		return game;
 	if (game.error)
@@ -96,8 +102,8 @@ housie.prototype.discardTicket = function (tag, name, playerPwd) {
 	return {message: 'Pending tickets discarded for '+ name + ' for the game ' + tag};
 };
 
-housie.prototype.confirmTicket = function (tag, name, playerPwd) {
-	var game = getGameAndValidateAccess(tag, 'Player', playerPwd, name); 
+housie.prototype.confirmTicket = function (tag, name, playPwd) {
+	var game = getGameAndValidateAccess(tag, 'Player', playPwd, name); 
 	if (game.error)
 		return game;
 	if (game.gameStarted) {
@@ -119,8 +125,8 @@ housie.prototype.confirmTicket = function (tag, name, playerPwd) {
 	return {message: 'Tickets confirmed. Total tickets count for ' + name + ' in game ' + tag + ' is ' + current_tickets.length};
 };
 
-housie.prototype.getTickets = function (tag, name, playerPwd) {
-	var game = getGameAndValidateAccess(tag, 'Player', playerPwd, name); 
+housie.prototype.getTickets = function (tag, name, playPwd) {
+	var game = getGameAndValidateAccess(tag, 'Player', playPwd, name); 
 	if (game.error)
 		return game;
 	return game.tickets[name];	
@@ -166,7 +172,7 @@ function getGameAndValidateAccess(tag, accessType, inPwd, name) {
 	if (accessType === 'Admin')
 		gamePwd = Game.adminPwd;
 	if (accessType === 'Player')
-		gamePwd = Game.playerPwd;
+		gamePwd = Game.playPwd;
 	if (inPwd !== gamePwd)
 		return {error: 'Invalid ' + accessType + ' password.'};
 	if (accessType === 'Player' && (!name || name.length === 0))
@@ -177,7 +183,7 @@ function getGameAndValidateAccess(tag, accessType, inPwd, name) {
 	return Game;	
 }
 
-var getGameForClient = function(game) {
+var getGameForPlayer = function(game) {
     var outGame = {tag:game.tag, pendingNumbers:game.pendingNumbers, drawnNumbers:game.drawnNumbers, finished:game.finished};
     if (game.number)
     	outGame.number = game.number;

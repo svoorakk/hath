@@ -32,8 +32,9 @@ exports.validateJoin = function(req, res){
 	var tag = req.params.tag;
 	console.log(tag);
 	var playerName = req.body.playername;
+	var gamePwd = req.body.gamepwd;
 	var playerPwd = req.body.playerpwd;
-	res.send(housie.validateJoin(tag, playerPwd, playerName));
+	res.send(housie.validateJoin(tag, gamePwd, playerPwd, playerName));
 };
 
 exports.issueTicket = function(req, res){
