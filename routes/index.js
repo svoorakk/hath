@@ -41,11 +41,18 @@ exports.issueTicket = function(req, res){
 	var tag = req.params.tag;
 	var name = req.body.name;
 	var playerPwd = req.body.playerpwd;
+	var gamePwd = req.body.gamepwd;
 	var maxNo = req.body.maxno;
 	var rows = req.body.rows;
 	var columns = req.body.columns;
 	var numberCount = req.body.numcount;
-	res.send(housie.issueTicket(tag, name, playerPwd, maxNo, rows, columns, numberCount));
+	housie.issueTicket(tag, gamePwd, name, playerPwd, maxNo, rows, columns, numberCount, function(err, result) {
+		if (err)
+			res.send(err);
+		else
+			res.send(result);
+			
+	});
 };
 
 exports.discardTicket = function(req, res){
@@ -73,7 +80,7 @@ exports.getTicketsForPrint = function(req, res) {
 	var tag = req.params.tag;
 	var adminPwd = req.body.adminpwd;
 	var qty = req.body.qty;
-	housie.getTicketsForPrint(tag, adminPwd, qty, function(result) {
+	housie.getTicketsForPrint(tag, adminPwd, qty, function(err, result) {
 		res.send(result);
 	});
 };

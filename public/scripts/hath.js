@@ -70,6 +70,8 @@ var createGame = function() {
 			alert(game.error);
 			return;
 		}
+		game.adminPwd = adPwd;
+		game.playPwd = playPwd;
 		//create browser variable
 		addGame(game, 'run');
 		setupRunTabs(game);
@@ -177,48 +179,78 @@ var joinGame = function(New) {
 		var name = document.getElementById("joinName").value;
 		var gamePwd = document.getElementById("joinGamePwd").value;
 		var playerPwd = document.getElementById("joinPlayerPwd").value;
-		var url = "validatejoin/"+tag;
-		var body = {};
-		body.playername = name;
-		body.gamepwd = gamePwd;	
-		body.playerpwd = playerPwd;	
-		//display wait animation
-		alert((body));
-		xmlHttpPost(url, JSON.stringify(body), function(err, game) {
-			game = JSON.parse(game);
-			if (game.error) {
-				alert(game.error);
-				return;
-			}
-			//create browser variable
-			game.playerPwd = pwd;
-			game.playerName = name;
-			addGame(game, 'play');
-			setupPlayTabs(game);
-		});
 	}
 	else {
 		var tag = document.getElementById("playGameList").value;
 		var game = getGames('play')[tag];
-		setupPlayTabs(game);
+		var name = game.playerName;
+		var gamePwd = game.gamePwd;
+		var playerPwd = game.playerPwd;
 	}
+	var url = "validatejoin/"+tag;
+	var body = {};
+	body.playername = name;
+	body.gamepwd = gamePwd;	
+	body.playerpwd = playerPwd;	
+	//display wait animation
+	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
+		game = JSON.parse(game);
+		if (game.error) {
+			alert(game.error);
+			return;
+		}
+		//create browser variable
+		game.gamePwd = gamePwd;
+		game.playerName = name;
+		game.playerPwd = playerPwd;	
+		addGame(game, 'play');
+		setupPlayTabs(game);
+	});
 }
 
 var getTicket = function () {
-	var tag = $.cookie("currentGame")
-	alert(tag);
+	var tag = $.cookie("currentGame");
 	var game = getGames('play')[tag];
 	var url = "issueticket/"+tag;
 	var body = {};
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
-	alert(JSON.stringify(body));
+	body.gamepwd = game.gamePwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, tickets) {
 		tickets = JSON.parse(tickets);
 		if (tickets.error) {
 			alert(tickets.error);
 			return;
 		}
-		alert(tickets);
+		$("#newticket").show();
+		$("#newTicketDisplay").append(ticketToHtml (tickets[tickets.length-1]));
+		$("#btnGetTicket").hide();
 	});
+};
+
+var confirmTicket = function () {
+	$("#btnGetTicket").show();
+	$("#newticket").hide();
+};
+
+var discardTicket = function () {
+	$("#btnGetTicket").show();
+	$("#newticket").hide();
+};
+
+
+var ticketToHtml = function (ticket) {
+	var tabl = "";
+	if (ticket) {
+		tabl = "<TABLE class='ticket'>";
+		for (var i = 0; i < ticket[0].length; i++) {
+			tabl = tabl + "<TR>";
+			for (var j = 0; j < ticket.length; j++) {
+				tabl = tabl + "<TD class='ticketcell'>" + (ticket[j][i] ? ticket[j][i] : "") + "</TD>";
+			}
+			tabl = tabl + "</TR>";
+		}
+		tabl = tabl + "</TABLE>";
+	}
+	return tabl;
 }

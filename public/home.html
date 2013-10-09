@@ -101,12 +101,12 @@
     				<li><a href="#playStatus">Play Status</a></li>
   			  	</ul>
   				<div id="buy">
-  					<input type="button" onclick="getTicket();" value="Get Ticket">
+  					<input type="button" onclick="getTicket();" value="Get Ticket" id="btnGetTicket">
   					<div id="newticket">
 	  					<div id="newTicketDisplay">
-   							<input type="button" onclick="confirmTicket()" value="Confirm Ticket">
-  							<input type="button" onclick="discardTicket()" value="Discard Ticket">
   						</div>
+   						<input type="button" onclick="confirmTicket()" value="Confirm Ticket" id="btnConfirmTicket">
+  						<input type="button" onclick="discardTicket()" value="Discard Ticket" id="btnDiscardTicket">
   					</div>
   					<div id="ticketCount">Tickets you already have for this game : </div>
   				</div>

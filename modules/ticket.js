@@ -237,7 +237,7 @@ var ticket = function (maxNo, rows, cols, numberCount, callback) {
 			return;
 		}
 		else {
-			console.log('Success');
+			console.log('Success', result);
 			callback(null, result);
 		}
 	});

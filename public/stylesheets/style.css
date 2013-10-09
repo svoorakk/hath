@@ -78,3 +78,13 @@ h2 {font-size:120%; text-align:center; margin-bottom:2%;}
 	margin:auto;
 	min-height:25%;
 }
+
+.ticket {
+	background-color: #00AAAA;
+	font-size:1em
+}
+
+.ticketcell {
+    border: .1em solid #000000;
+	padding:.1em;
+}

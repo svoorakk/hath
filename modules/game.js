@@ -3,11 +3,11 @@
  */
 "option strict";
 
-var Game = function (tag, adminPwd, playerPwd, maxNo) {
+var Game = function (tag, adminPwd, playPwd, maxNo) {
 
     this.maxNo = maxNo;
     this.adminPwd = adminPwd;
-    this.playerPwd = playerPwd;
+    this.playPwd = playPwd;
     this.tag = tag;
     this.maxNo = maxNo||90;
     this.finished = false;
