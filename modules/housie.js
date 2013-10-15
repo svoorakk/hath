@@ -25,14 +25,11 @@ housie.prototype.drawNumber = function(tag, adminPwd) {
 };
 
 housie.prototype.validateJoin = function(tag, playPwd, playerPwd, playerName) {
-	var game = getGameAndValidateAccess(tag, 'Player', playPwd, playerName); 
+	var game = getGameAndValidateAccess(tag, 'Game', playPwd, playerName); 
 	if (game.error)
 		return game;
 	if (game.gameStarted)
 		return {'error': 'Game already commenced. New players cannot join after the commencement of the game.'};
-	if (game.players && game.players[playerName])
-		if (playerPwd != game.players[playerName].password)
-			return {'error': 'Game password incorrect.'};
 	if (!game.players) 
 		game.players = {};
 	player = {};
@@ -70,7 +67,7 @@ housie.prototype.createGame = function (tag, adminPwd, playPwd, maxNo) {
 };
 
 housie.prototype.issueTicket = function (tag, playPwd, name, playerPwd, maxNo, rows, columns, numberCount, callback) {
-	var game = getGameAndValidateAccess(tag, 'Player', playPwd, name); 
+	var game = getGameAndValidateAccess(tag, 'Game', playPwd, name); 
 	if (game.error) {
 		callback(game);
 		return;
@@ -81,6 +78,10 @@ housie.prototype.issueTicket = function (tag, playPwd, name, playerPwd, maxNo, r
 	}
 	if (!game.players[name]) {
 		callback({error:'Player needs to join the game before tickets can be issued.'});
+		return;
+	}
+	if (!playerPasswordMatch(game.players[name], playerPwd)) {
+		callback({error:'Player password does not match.'});
 		return;
 	}
 	if (game.gameStarted) {
@@ -106,11 +107,11 @@ housie.prototype.issueTicket = function (tag, playPwd, name, playerPwd, maxNo, r
 };
 
 housie.prototype.discardTicket = function (tag, name, playPwd, playerPwd) {
-	var game = getGameAndValidateAccess(tag, 'Player', playPwd, name); 
+	var game = getGameAndValidateAccess(tag, 'Game', playPwd, name); 
 	if (game.error)
 		return game;
-	if (game.error)
-		return game;
+	if (!playerPasswordMatch(game.players[name], playerPwd))
+		return {error:"Player password does not match"};;
 	if (!name || name.length === 0) {
 		return {error:"'name' needed to discard tickets"};
 	}
@@ -120,7 +121,7 @@ housie.prototype.discardTicket = function (tag, name, playPwd, playerPwd) {
 };
 
 housie.prototype.confirmTicket = function (tag, name, playPwd, playerPwd) {
-	var game = getGameAndValidateAccess(tag, 'Player', playPwd, name); 
+	var game = getGameAndValidateAccess(tag, 'Game', playPwd, name); 
 	if (game.error)
 		return game;
 	var player;
@@ -128,7 +129,7 @@ housie.prototype.confirmTicket = function (tag, name, playPwd, playerPwd) {
 		player = game.players[name];
 	if (!player)
 		return {error:'Player not found!'};
-	if (player.password != playerPwd)
+	if (!playerPasswordMatch(player, playerPwd))
 		return {error:'Player password does not match!'};
 	if (game.gameStarted) {
 		return {error:'Game already commenced. Tickets cannot be confirmed after the commencement of the game'};
@@ -144,14 +145,17 @@ housie.prototype.confirmTicket = function (tag, name, playPwd, playerPwd) {
 	game.players[name].tickets = current_tickets;
 	db.put('game', tag, game);
 	db.put('ticket', ticket_tag, []);
-	return {message: 'Tickets confirmed. Total tickets count for ' + name + ' in game ' + tag + ' is ' + current_tickets.length};
+	return {message: 'Tickets confirmed. Total tickets count for ' + name + ' in game ' + tag + ' is ' + current_tickets.length, ticketCount: current_tickets.length};
 };
 
-housie.prototype.getTickets = function (tag, name, playPwd) {
-	var game = getGameAndValidateAccess(tag, 'Player', playPwd, name); 
+housie.prototype.getTickets = function (tag, name, playPwd, playerPwd) {
+	var game = getGameAndValidateAccess(tag, 'Game', playPwd, name); 
 	if (game.error)
 		return game;
-	return game.players[name].tickets;	
+	if (playerPasswordMatch(game.players[name],playerPwd))
+		return game.players[name].tickets;	
+	else
+		return {error: 'Invalid player password.'};
 };
 
 housie.prototype.getTicketsForPrint = function (tag, adminPwd, qty, callback) {
@@ -193,13 +197,13 @@ function getGameAndValidateAccess(tag, accessType, inPwd, name) {
 	var gamePwd = '';
 	if (accessType === 'Admin')
 		gamePwd = Game.adminPwd;
-	if (accessType === 'Player')
+	if (accessType === 'Game')
 		gamePwd = Game.playPwd;
 	if (inPwd !== gamePwd)
 		return {error: 'Invalid ' + accessType + ' password.'};
-	if (accessType === 'Player' && (!name || name.length === 0))
+	if (accessType === 'Game' && (!name || name.length === 0))
 		return {error:"Player name required."};
-	if ((accessType === "Player") && Game.gameStarted === true)
+	if ((accessType === "Game") && Game.gameStarted === true)
 		if (!game.players[name])
 			return {error:"Player cannot join/tickets issued after Game has started."};
 	return Game;	
@@ -211,6 +215,13 @@ var getGameForPlayer = function(game) {
     	outGame.number = game.number;
     return outGame;
 };
+
+var playerPasswordMatch = function (player, playerPassword) {
+	if (player.password === playerPassword)
+		return true;
+	else
+		return false;
+}
 
 module.exports = function () {
 	return new housie();

@@ -59,21 +59,24 @@ exports.discardTicket = function(req, res){
 	var tag = req.params.tag;
 	var name = req.body.name;
 	var playerPwd = req.body.playerpwd;
-	res.send(housie.discardTicket(tag, name, playerPwd));
+	var gamePwd = req.body.gamepwd;
+	res.send(housie.discardTicket(tag, name, gamePwd, playerPwd));
 };
 
 exports.confirmTicket = function(req, res){
 	var tag = req.params.tag;
 	var name = req.body.name;
 	var playerPwd = req.body.playerpwd;
-	res.send(housie.confirmTicket(tag, name, playerPwd));
+	var gamePwd = req.body.gamepwd;
+	res.send(housie.confirmTicket(tag, name, gamePwd, playerPwd));
 };
 
 exports.getTickets = function(req, res){
 	var tag = req.params.tag;
 	var name = req.body.name;
 	var playerPwd = req.body.playerpwd;
-	res.send(housie.getTickets(tag, name, playerPwd));
+	var gamePwd = req.body.gamepwd;
+	res.send(housie.getTickets(tag, name, gamePwd, playerPwd));
 };
 
 exports.getTicketsForPrint = function(req, res) {

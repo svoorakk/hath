@@ -229,13 +229,47 @@ var getTicket = function () {
 };
 
 var confirmTicket = function () {
-	$("#btnGetTicket").show();
-	$("#newticket").hide();
+	var tag = $.cookie("currentGame");
+	var game = getGames('play')[tag];
+	var url = "confirmticket/"+tag;
+	var body = {};
+	body.name = game.playerName;
+	body.playerpwd = game.playerPwd;
+	body.gamepwd = game.gamePwd;
+	alert(JSON.stringify(body));
+	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
+		data = JSON.parse(data);
+		if (data.error) {
+			alert(data.error);
+			return;
+		}
+		if (data.message) {
+			alert(data.message);
+		}
+		$("#btnGetTicket").show();
+		$("#newticket").hide();
+	});
 };
 
 var discardTicket = function () {
-	$("#btnGetTicket").show();
-	$("#newticket").hide();
+	var tag = $.cookie("currentGame");
+	var game = getGames('play')[tag];
+	var url = "discardticket/"+tag;
+	var body = {};
+	body.name = game.playerName;
+	body.playerpwd = game.playerPwd;
+	body.gamepwd = game.gamePwd;
+	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
+		if (data.error) {
+			alert(data.error);
+			return;
+		}
+		if (data.message) {
+			alert(data.message);
+		}
+		$("#btnGetTicket").show();
+		$("#newticket").hide();
+	});
 };
 
 
