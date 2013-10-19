@@ -24,7 +24,7 @@ exports.createGame = function(req, res){
 
 exports.drawNumber = function(req, res){
 	var tag = req.params.tag;
-	var adminPwd = req.body.admipwd;
+	var adminPwd = req.body.adminpwd;
 	res.send(housie.drawNumber(tag, adminPwd));
 };
 
@@ -84,6 +84,6 @@ exports.getTicketsForPrint = function(req, res) {
 	var adminPwd = req.body.adminpwd;
 	var qty = req.body.qty;
 	housie.getTicketsForPrint(tag, adminPwd, qty, function(err, result) {
-		res.send(result);
+		res.render('ticketsforprint', {tickets: result});
 	});
 };

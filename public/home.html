@@ -54,13 +54,13 @@
   					players who are not online you have an option to print tickets using the below option.
   					<p>
 					Select number of tickets to print : 
-					Click to download PDF with tickets 
+					<a href="Javascript:getTicketsForPrint();">Click to download PDF with tickets </a>
 					</p>
   				</div>
   				<div id="draw">
 					<div id="numberDisplay">
 					</div>
-					Draw
+   						<input type="button" onclick="drawNumber()" value="Draw a Number" id="btnDrawNbr">
   				</div>
   				<div id="status">
 					Status of the Game :
@@ -97,21 +97,21 @@
         		<div id="playTabs">
 			  	<ul>
     				<li><a href="#buy">Get Tickets</a></li>
-    				<li><a href="#tickets">View Tickets</a></li>
+    				<li><a href="#ticketsDisplay" >View Tickets</a></li>
     				<li><a href="#playStatus">Play Status</a></li>
   			  	</ul>
   				<div id="buy">
-  					<input type="button" onclick="getTicket();" value="Get Ticket" id="btnGetTicket">
+  					<div id="ticketCount">Tickets you already have for this game : </div>
+  					<input type="button" onclick="newTicket();" value="New Ticket" id="btnGetTicket">
   					<div id="newticket">
 	  					<div id="newTicketDisplay">
   						</div>
    						<input type="button" onclick="confirmTicket()" value="Confirm Ticket" id="btnConfirmTicket">
   						<input type="button" onclick="discardTicket()" value="Discard Ticket" id="btnDiscardTicket">
   					</div>
-  					<div id="ticketCount">Tickets you already have for this game : </div>
   				</div>
-  				<div id="tickets">
-					Tickets
+  				<div id="ticketsDisplay" style="height:300px;overflow:scroll;">
+					
   				</div>
   				<div id="playStatus">
 					Status of the Game :
@@ -125,8 +125,16 @@
     </div>
 <script>
 $("input[type=button]").button();
-$("#runTabs").tabs().hide();
-$("#playTabs").tabs().hide();
+$("#runTabs").tabs({  
+	activate: function( event, ui ) {
+		activateTab('run',ui.newTab.index());
+		}
+	}).hide();
+$("#playTabs").tabs({  
+	activate: function( event, ui ) {
+		activateTab('play',ui.newTab.index());
+		}
+	}).hide();
 $("#newticket").hide();
 </script>
 </body>

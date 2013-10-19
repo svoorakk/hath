@@ -88,3 +88,9 @@ h2 {font-size:120%; text-align:center; margin-bottom:2%;}
     border: .1em solid #000000;
 	padding:.1em;
 }
+
+#numberDisplay {
+	background-color: #AAAAAA;
+	font-size:10em;
+	width:50%;
+}

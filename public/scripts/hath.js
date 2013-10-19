@@ -78,6 +78,27 @@ var createGame = function() {
 	});
 };
 
+var drawNumber = function() {
+	var tag = $.cookie("currentGame");
+	var localgame = getGames('run')[tag];
+	var url = "drawnumber/"+tag;
+	var body = {};
+	body.adminpwd = localgame.adminPwd;
+	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
+		game = JSON.parse(game);
+		if (game.error) {
+			alert(game.error);
+			return;
+		}
+		localgame.drawnNumbers = game.drawnNumbers;
+		localgame.pendingNumbers = game.pendingNumbers;
+		addGame(localgame, 'run');
+		$("#numberDisplay").html(game.number);
+		if (game.finished)
+			alert("Game Finished");
+	});	
+};
+
 var setupRunTabs = function(game) {
 	$.cookie("currentGame", game.tag);
 	//display next screen
@@ -154,6 +175,14 @@ var setupPlayPanel = function() {
 	//display the new game panel
 };
 
+var activateTab =  function (type, index) {
+	if (type === 'play') {
+		if (index === 0 || index === 1) {
+			getTickets();
+		}
+	}
+};
+
 var populateGameList = function(target, games) {
 	var tags = Object.keys(games);
 	target.innerHTML = '';
@@ -205,10 +234,11 @@ var joinGame = function(New) {
 		game.playerPwd = playerPwd;	
 		addGame(game, 'play');
 		setupPlayTabs(game);
+		activateTab('play', 0);
 	});
 }
 
-var getTicket = function () {
+var newTicket = function () {
 	var tag = $.cookie("currentGame");
 	var game = getGames('play')[tag];
 	var url = "issueticket/"+tag;
@@ -236,7 +266,6 @@ var confirmTicket = function () {
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
 	body.gamepwd = game.gamePwd;
-	alert(JSON.stringify(body));
 	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
 		data = JSON.parse(data);
 		if (data.error) {
@@ -246,7 +275,9 @@ var confirmTicket = function () {
 		if (data.message) {
 			alert(data.message);
 		}
+		$("#ticketCount").html("Tickets you already have for this game : " + data.ticketCount);
 		$("#btnGetTicket").show();
+		$("#newTicketDisplay").html("");
 		$("#newticket").hide();
 	});
 };
@@ -268,10 +299,40 @@ var discardTicket = function () {
 			alert(data.message);
 		}
 		$("#btnGetTicket").show();
+		$("#newTicketDisplay").html("");
 		$("#newticket").hide();
 	});
 };
 
+var getTickets = function () {
+	var tag = $.cookie("currentGame");
+	var game = getGames('play')[tag];
+	var url = "gettickets/"+tag;
+	var body = {};
+	body.name = game.playerName;
+	body.playerpwd = game.playerPwd;
+	body.gamepwd = game.gamePwd;
+	xmlHttpPost(url, JSON.stringify(body), function(err, tickets) {
+		tickets = JSON.parse(tickets);
+		if (tickets.error) {
+			alert(tickets.error);
+			return;
+		}
+		var ticketHtml = "Number of tickets : " + tickets.length + "<br><br>";
+		for (var i = 0; i < tickets.length; i++) {
+			ticketHtml = ticketHtml + ticketToHtml(tickets[i]) + "<br>";
+		}
+		$("#ticketsDisplay").html(ticketHtml);
+		$("#ticketCount").html("Tickets you already have for this game : " + tickets.length);
+		$("#btnGetTicket").show();
+		$("#newTicketDisplay").html("");
+		$("#newticket").hide();
+	});
+};
+
+var getTicketsForPrint = function () {
+	window.open("printtickets.html?qty=20");
+};
 
 var ticketToHtml = function (ticket) {
 	var tabl = "";
@@ -287,4 +348,4 @@ var ticketToHtml = function (ticket) {
 		tabl = tabl + "</TABLE>";
 	}
 	return tabl;
-}
+};
