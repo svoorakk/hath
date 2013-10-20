@@ -39,6 +39,8 @@ app.post('/gettickets/:tag', routes.getTickets);
 app.post('/discardticket/:tag', routes.discardTicket);
 app.post('/getticketsforprint', routes.getTicketsForPrint);
 app.post('/getticketsforprint/:tag', routes.getTicketsForPrint);
+app.post('/getgame/:tag', routes.getGame);
+app.post('/gamestats/:tag', routes.gameStats);
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

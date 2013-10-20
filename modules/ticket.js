@@ -231,16 +231,37 @@ var ticket = function (maxNo, rows, cols, numberCount, callback) {
 	generateTicket(maxNo, rows, cols, numberCount, function(err, result) {
 		generationCounter++;
 		console.log('generationCounter',generationCounter);
-		if (err) {
+		if (err || !validTicket(result, rows, numberCount)) {
 			console.log('Error', err);
 			ticket(maxNo, rows, cols, numberCount, callback);
 			return;
 		}
 		else {
-			console.log('Success', result);
+			//console.log('Success', result);
 			callback(null, result);
 		}
 	});
+};
+
+var validTicket = function (ticket, rows, numberCount) {
+	var cols = ticket.length;
+	rows = rows||ticket[0].length;
+	var validCount = (numberCount||15)/(rows);
+	for (var i = 0; i < rows; i++) {
+		var counter = 0;
+		for (var j = 0; j < cols; j++) {
+			if (ticket[j][i]) 
+				counter++;
+		}
+		if (counter != validCount) {
+			console.log("Invalid Ticket : ", ticket);
+			console.log("Row : ", i+1);
+			console.log("Counter : ", counter);
+			console.log("Valid Count : ", validCount);
+			return false;
+		}
+	}
+	return true;
 };
 
 module.exports = ticket;

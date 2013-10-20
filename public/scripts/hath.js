@@ -75,6 +75,7 @@ var createGame = function() {
 		//create browser variable
 		addGame(game, 'run');
 		setupRunTabs(game);
+		updateStatus('run', game);
 	});
 };
 
@@ -179,6 +180,17 @@ var activateTab =  function (type, index) {
 	if (type === 'play') {
 		if (index === 0 || index === 1) {
 			getTickets();
+		}
+		if (index === 2) {
+			updateStatus(type);
+		}
+	}
+	if (type === 'run') {
+		if (index === 2) {
+			updateStatus(type);
+		}
+		if (index === 3) {
+			updateStats();
 		}
 	}
 };
@@ -330,8 +342,60 @@ var getTickets = function () {
 	});
 };
 
+var updateStatus = function (type, game) {
+	if (!game) {
+		var tag = $.cookie("currentGame");
+		game = getGames(type)[tag];
+	}
+	var max = 0;
+	var pending = {};
+	var drawn = {};
+	game.pendingNumbers.forEach(function (elem, idx, arr) {
+		if (elem) {
+			pending[elem] = elem;
+			if (elem > max)
+				max = elem;
+		}
+	});
+	game.drawnNumbers.forEach(function (elem, idx, arr) {
+		if (elem) {
+			drawn[elem] = elem;
+			if (elem > max)
+				max = elem;
+		}
+	});
+	var statusList = document.getElementById(type+"Statuslist");
+	statusList.innerHTML = '';
+	for (var i = 1; i < max+1; i++) {
+		var li = document.createElement('li');
+		li.innerText = i;
+		if (drawn[i]) {
+			li.style["background-color"] = "lime";
+		}
+		else {
+			li.style["background-color"] = "red";
+		}
+		li.class = "ui-state-default";
+		statusList.appendChild(li);
+	}
+};
+
+var updateStats = function () {
+	var tag = $.cookie("currentGame");
+	game = getGames('run')[tag];
+	var url = "gamestats/"+tag;
+	var body = {};
+	body.adminpwd = game.adminPwd;
+	xmlHttpPost(url, JSON.stringify(body), function(err, stats) {
+		$("#stats").html(stats);
+	});
+};
+
 var getTicketsForPrint = function () {
-	window.open("printtickets.html?qty=20");
+	var qty = document.getElementById("selTicketCount").value;
+	if (qty === "")
+		qty = "10";
+	window.open("printtickets.html?qty="+qty);
 };
 
 var ticketToHtml = function (ticket) {
@@ -341,7 +405,7 @@ var ticketToHtml = function (ticket) {
 		for (var i = 0; i < ticket[0].length; i++) {
 			tabl = tabl + "<TR>";
 			for (var j = 0; j < ticket.length; j++) {
-				tabl = tabl + "<TD class='ticketcell'>" + (ticket[j][i] ? ticket[j][i] : "") + "</TD>";
+				tabl = tabl + "<TD class='ticketcell' width='11%' align='center'>" + (ticket[j][i] ? ticket[j][i] : "") + "</TD>";
 			}
 			tabl = tabl + "</TR>";
 		}

@@ -27,13 +27,13 @@ housie.prototype.drawNumber = function(tag, adminPwd) {
 housie.prototype.validateJoin = function(tag, playPwd, playerPwd, playerName) {
 	var game = getGameAndValidateAccess(tag, 'Game', playPwd, playerName); 
 	if (game.error)
-		return game;
-	if (game.gameStarted)
-		return {'error': 'Game already commenced. New players cannot join after the commencement of the game.'};
+		return game;	
 	if (!game.players) 
 		game.players = {};
 	player = {};
 	if (!game.players[playerName]) {
+		if (game.gameStarted)
+			return {'error': 'Game already commenced. New players cannot join after the commencement of the game.'};
 		player.password = playerPwd;
 		player.tickets = [];
 		game.players[playerName] = player;
@@ -51,7 +51,10 @@ housie.prototype.createGame = function (tag, adminPwd, playPwd, maxNo) {
 	}
 	var game = db.get('game', tag);
 	if (game) {
-		return {error: 'An active game with same tag already exists. Please retry with a different tag.'};
+		if (game.adminPwd === adminPwd && game.playPwd === playPwd )
+			return game;
+		else
+			return {error: 'An active game with same tag already exists. Please retry with a different tag.'};
 	}
 	if (!adminPwd) {
 		return {error: 'An administrator password is needed to create a game.'};
@@ -167,6 +170,10 @@ housie.prototype.getTicketsForPrint = function (tag, adminPwd, qty, callback) {
 		callback(game);
 		return;
 	}
+	if (game.gameStarted) {
+		callback ({error:'Game already commenced. Tickets cannot be confirmed after the commencement of the game'});
+		return;
+	}
 	var cb = function (err, result) {
 		tickets.push(result);
 	};
@@ -187,6 +194,44 @@ housie.prototype.getTicketsForPrint = function (tag, adminPwd, qty, callback) {
 	callback(null, tickets);
 };
 
+housie.prototype.getGame = function (tag, gamePwd) {
+	var game = db.get('game', tag);
+	if (!game)
+		return ({exists: false});
+	if (game.playPwd === gamePwd) {
+		return ({exists: true, game: getGameForPlayer(game)});
+	}
+	else {
+		return ({exists: true, error: "Incorrect Game password"});
+	}
+};
+
+housie.prototype.gameStats = function (tag, adminPwd) {
+	var stats = {};
+	console.log(adminPwd, tag);
+	var game = getGameAndValidateAccess(tag, 'Admin', adminPwd); 
+	if (game.error)
+		return game;
+	//get number of players
+	if (game.players) {
+		var players = Object.keys(game.players);
+		//get number of tickets for each player
+		for (var i = 0; i < players.length; i++) {
+			var player = {name: players[i], ticketCount: game.players[players[i]].tickets.length};
+			players[i] = player;
+		}
+		stats.players = players;
+	}
+	//get numbers drawn, numbers pending
+	stats.numbersPendingCount = game.pendingNumbers.length;
+	stats.numbersDrawnCount = 0;
+	for (var i=0; i<game.drawnNumbers.length; i++) {
+		if (game.drawnNumbers[i])
+			stats.numbersDrawnCount++;
+	}
+	return stats;
+};
+
 function getGameAndValidateAccess(tag, accessType, inPwd, name) {
 	if (!tag || tag.length === 0) {
 		return {error:"Missing game 'tag'."};
@@ -204,7 +249,7 @@ function getGameAndValidateAccess(tag, accessType, inPwd, name) {
 	if (accessType === 'Game' && (!name || name.length === 0))
 		return {error:"Player name required."};
 	if ((accessType === "Game") && Game.gameStarted === true)
-		if (!game.players[name])
+		if (!Game.players[name])
 			return {error:"Player cannot join/tickets issued after Game has started."};
 	return Game;	
 }

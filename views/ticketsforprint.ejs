@@ -1,10 +1,38 @@
 <% layout('') %>
+<% var ticketToHtml = function (ticket) {
+	if (ticket) { %>
+		<TABLE class='ticket' width='100%'>
+		<% for (var i = 0; i < ticket[0].length; i++) {	%>
+			<TR>
+			<%for (var j = 0; j < ticket.length; j++) { %>
+				<TD class='ticketcell' width='11%' align='center'>
+				<%= (ticket[j][i] ? ticket[j][i] : "") %>
+				</TD> 
+			<% } %>
+			</TR>
+		<% } %>
+		</TABLE><div style="font-size:7pt; margin-top:0">housie@home</div>
+	<% } %>
+<% }%>
 <!DOCTYPE html>
 <html>
   <head>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
-  <body>
-    <%= tickets %>
+  <body style="background-color:white">
+  <% if (tickets) { %>
+  	<table cellspacing="50">
+	<% for(var i=0; i<tickets.length/2; i++) {%>
+		<tr>
+		<td width="50%" align="center">
+   		<% ticketToHtml(tickets[i*2]) %>
+		</td>
+		<td width="50%" align="center">
+   		<% ticketToHtml(tickets[i*2+1]) %>
+		</td>
+		</tr>
+	<% } %>
+  	<table>
+  <% } %>
   </body>
 </html>

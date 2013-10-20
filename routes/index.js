@@ -87,3 +87,15 @@ exports.getTicketsForPrint = function(req, res) {
 		res.render('ticketsforprint', {tickets: result});
 	});
 };
+
+exports.getGame = function(req, res) {
+	var tag = req.params.tag;
+	var gamePwd = req.body.gamepwd;
+	res.send(housie.getGame(tag, gamePwd));
+};
+
+exports.gameStats = function(req, res) {
+	var tag = req.params.tag;
+	var adminPwd = req.body.adminpwd;
+	res.send(housie.gameStats(tag, adminPwd));
+};

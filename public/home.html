@@ -47,23 +47,36 @@
 			  	<ul>
     				<li><a href="#tickets">Print Tickets</a></li>
     				<li><a href="#draw">Draw Numbers</a></li>
-    				<li><a href="#status">View Status</a></li>
+    				<li><a href="#runStatus">View Status</a></li>
+    				<li><a href="#stats">Game Stats</a></li>
   			  	</ul>
   				<div id="tickets">
   					Players who are online can join the game and get tickets using the 'Play' option from home page. However for 
   					players who are not online you have an option to print tickets using the below option.
   					<p>
 					Select number of tickets to print : 
-					<a href="Javascript:getTicketsForPrint();">Click to download PDF with tickets </a>
+					<SELECT id="selTicketCount">
+						<OPTION VALUE=""></OPTION>
+						<OPTION VALUE="10">10</OPTION>
+						<OPTION VALUE="20">20</OPTION>
+						<OPTION VALUE="30">30</OPTION>
+						<OPTION VALUE="40">40</OPTION>
+						<OPTION VALUE="50">50</OPTION>
+					</SELECT>
+					<a href="Javascript:getTicketsForPrint();">Click here get tickets </a>
 					</p>
   				</div>
   				<div id="draw">
-					<div id="numberDisplay">
+					<div id="numberDisplay">&nbsp;
 					</div>
    						<input type="button" onclick="drawNumber()" value="Draw a Number" id="btnDrawNbr">
   				</div>
-  				<div id="status">
-					Status of the Game :
+  				<div id="runStatus">
+					Status of the Game : 
+					<ul id="runStatuslist" class="statuslist">
+					</ul>
+  				</div>
+  				<div id="stats">
   				</div>
 			</div>
     		<div>&nbsp;</div>
@@ -115,6 +128,8 @@
   				</div>
   				<div id="playStatus">
 					Status of the Game :
+					<ul id="playStatuslist" class="statuslist">
+					</ul>
   				</div>
 			</div>	
     	</div>
