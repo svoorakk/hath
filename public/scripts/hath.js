@@ -387,7 +387,20 @@ var updateStats = function () {
 	var body = {};
 	body.adminpwd = game.adminPwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, stats) {
-		$("#stats").html(stats);
+		stats = JSON.parse(stats);
+		var statsHtml = "<table><tr class='ui-state-default'><td>Numbers Drawn:</td><td>"+stats.numbersDrawnCount+"</td></tr>"
+						+ "<tr class='ui-state-default'><td>Numbers Pending:</td><td>" + stats.numbersPendingCount+"</td></tr></table>"
+						+ "Players : <table><tr><td></td><td>Name</td><td>Number of Tickets</td></tr>";
+		var ticketCount = 0;
+		if (!stats.players)
+			stats.players = [];
+		for (var i = 0; i < stats.players.length; i++) {
+			statsHtml = statsHtml + "<tr class='ui-widget-content'><td>"+ (i+1)  + "</td><td>" + stats.players[i].name 
+						+ "</td><td>" + stats.players[i].ticketCount + "</td></tr>";
+			ticketCount = ticketCount + stats.players[i].ticketCount
+		}
+		statsHtml = statsHtml + "<tr class='ui-state-default'><td></td><td>" + stats.players.length + " Players</td><td>" + ticketCount + "</td></tr></table>"  
+		$("#stats").html(statsHtml);
 	});
 };
 
