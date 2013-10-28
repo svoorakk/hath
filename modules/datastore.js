@@ -5,7 +5,10 @@ var Datastore = function () {};
 
 Datastore.prototype.get = function (collection, id) {
 	if (memory[collection])
-		return memory[collection][id];
+		if (id)
+			return memory[collection][id];
+		else
+			return memory[collection];
 	else
 		return null;
 };

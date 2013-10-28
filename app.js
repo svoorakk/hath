@@ -4,9 +4,11 @@
  */
 
 var express = require('express')
-  , routes = require('./routes');
+ , routes = require('./routes')
+ , socketServer = require('./modules/socket-server');
 
-var app = module.exports = express.createServer();
+var app = module.exports = express.createServer()
+ ,  io = require('socket.io').listen(app);
 
 // Configuration
 
@@ -41,6 +43,10 @@ app.post('/getticketsforprint', routes.getTicketsForPrint);
 app.post('/getticketsforprint/:tag', routes.getTicketsForPrint);
 app.post('/getgame/:tag', routes.getGame);
 app.post('/gamestats/:tag', routes.gameStats);
+app.post('/gamelist/:filter', routes.gameList);
+app.post('/newgamelist/:filter', routes.newGameList);
+
+socketServer.setup(io);
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

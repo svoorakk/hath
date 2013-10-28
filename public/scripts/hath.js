@@ -331,14 +331,14 @@ var getTickets = function () {
 			return;
 		}
 		var ticketHtml = "Number of tickets : " + tickets.length + "<br><br>";
-		for (var i = 0; i < tickets.length; i++) {
-			ticketHtml = ticketHtml + ticketToHtml(tickets[i]) + "<br>";
-		}
 		$("#ticketsDisplay").html(ticketHtml);
 		$("#ticketCount").html("Tickets you already have for this game : " + tickets.length);
 		$("#btnGetTicket").show();
 		$("#newTicketDisplay").html("");
 		$("#newticket").hide();
+		for (var i = 0; i < tickets.length; i++) {
+			ticketHtml = ticketHtml + ticketToHtml(tickets[i]) + "<br>";
+		}
 	});
 };
 

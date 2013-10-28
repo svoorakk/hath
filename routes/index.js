@@ -99,3 +99,13 @@ exports.gameStats = function(req, res) {
 	var adminPwd = req.body.adminpwd;
 	res.send(housie.gameStats(tag, adminPwd));
 };
+
+exports.gameList = function(req, res) {
+	var filter = req.params.filter;
+	res.send(housie.gameList(filter));
+};
+
+exports.newGameList = function(req, res) {
+	var filter = req.params.filter;
+	res.send(housie.gameList(filter, true));
+};

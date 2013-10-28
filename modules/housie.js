@@ -232,6 +232,26 @@ housie.prototype.gameStats = function (tag, adminPwd) {
 	return stats;
 };
 
+housie.prototype.gameList =  function (filter, New) {
+	var games = db.get('game');
+	var tags = Object.keys(games);
+	var list = [];
+	for (var i = 0; i < tags.length; i++) {
+		var tag = tags[i];
+		if (tag.toLowerCase().indexOf(filter.toLowerCase()) > -1) {
+			var game = games[tag];
+			console.log(game.gameStarted);
+			console.log(New);
+			console.log(((New && game.gameStarted) || (!New)));
+			if (((New && !game.gameStarted) || (!New)) && !game.finished) {
+				list.push(tag);
+			}
+		}
+	}
+	list.sort();
+	return list;
+};
+
 function getGameAndValidateAccess(tag, accessType, inPwd, name) {
 	if (!tag || tag.length === 0) {
 		return {error:"Missing game 'tag'."};

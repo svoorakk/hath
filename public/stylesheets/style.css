@@ -118,3 +118,7 @@ h2 {font-size:120%; text-align:center; margin-bottom:2%;}
 	text-align: center;
 	width: 50px;
 }
+
+.ticketDrawnNumber {
+	text-decoration:line-through;
+}

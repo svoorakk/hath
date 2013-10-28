@@ -151,6 +151,18 @@ $("#playTabs").tabs({
 		}
 	}).hide();
 $("#newticket").hide();
+$("#joinTag").autocomplete({
+    source: function (request, response) {
+        $.post("/newgamelist"+request.term, request, response);
+    },
+    minLength: 2
+});
+$("#newTag").autocomplete({
+    source: function (request, response) {
+        $.post("/gamelist/"+request.term, request, response);
+    },
+    minLength: 2
+});
 </script>
 </body>
 </html>
