@@ -199,7 +199,7 @@ housie.prototype.getGame = function (tag, gamePwd) {
 	if (!game)
 		return ({exists: false});
 	if (game.playPwd === gamePwd) {
-		return ({exists: true, game: getGameForPlayer(game)});
+		return ({exists: true, 'game': getGameForPlayer(game)});
 	}
 	else {
 		return ({exists: true, error: "Incorrect Game password"});
@@ -234,7 +234,9 @@ housie.prototype.gameStats = function (tag, adminPwd) {
 
 housie.prototype.gameList =  function (filter, New) {
 	var games = db.get('game');
-	var tags = Object.keys(games);
+	var tags = [];
+	if (games)
+		tags = Object.keys(games);
 	var list = [];
 	for (var i = 0; i < tags.length; i++) {
 		var tag = tags[i];

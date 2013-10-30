@@ -57,12 +57,12 @@ var createGame = function() {
 	//validate
 	var tag = document.getElementById("newTag").value;
 	var adPwd = document.getElementById("newAdminPwd").value;
-	var playPwd = document.getElementById("newPlayPwd").value;
+	var gamePwd = document.getElementById("newPlayPwd").value;
 	//call server api to create game
 	var url = "/creategame/"+tag;
 	var body = {};
 	body.adminpwd = adPwd;
-	body.playerpwd = playPwd;
+	body.playerpwd = gamePwd;
 	//display wait animation
 	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
 		game = JSON.parse(game);
@@ -71,7 +71,7 @@ var createGame = function() {
 			return;
 		}
 		game.adminPwd = adPwd;
-		game.playPwd = playPwd;
+		game.gamePwd = gamePwd;
 		//create browser variable
 		addGame(game, 'run');
 		setupRunTabs(game);
@@ -93,12 +93,40 @@ var drawNumber = function() {
 		}
 		localgame.drawnNumbers = game.drawnNumbers;
 		localgame.pendingNumbers = game.pendingNumbers;
+		localgame.finished = game.finished;
+		localgame.gameStarted = game.gameStarted;
 		addGame(localgame, 'run');
 		$("#numberDisplay").html(game.number);
 		if (game.finished)
 			alert("Game Finished");
 	});	
 };
+
+var refreshGame = function (tag) {
+	var localgame = getGames('run')[tag]||getGames('play')[tag];
+	var url = "getgame/"+tag;
+	var body = {};
+	body.gamepwd = localgame.gamePwd;
+	xmlHttpPost(url, JSON.stringify(body), function(err, response) {
+		response = JSON.parse(response);
+		if (response.error) {
+			alert(response.error);
+			return;
+		}
+		var game = response.game;
+		localgame.drawnNumbers = game.drawnNumbers;
+		localgame.pendingNumbers = game.pendingNumbers;
+		localgame.finished = game.finished;
+		localgame.gameStarted = game.gameStarted;
+		if (getGames('run')[tag])
+			addGame(localgame, 'run');
+		if (getGames('play')[tag])
+			addGame(localgame, 'play');
+		updateStatus('play', localgame);
+		updateStatus('run',localgame);
+	});	
+};
+
 
 var setupRunTabs = function(game) {
 	$.cookie("currentGame", game.tag);
@@ -182,12 +210,12 @@ var activateTab =  function (type, index) {
 			getTickets();
 		}
 		if (index === 2) {
-			updateStatus(type);
+			refreshGame($.cookie("currentGame"));
 		}
 	}
 	if (type === 'run') {
 		if (index === 2) {
-			updateStatus(type);
+			refreshGame($.cookie("currentGame"));
 		}
 		if (index === 3) {
 			updateStats();
@@ -213,6 +241,8 @@ var populateGameList = function(target, games) {
 		target.add(o, null);
 	}
 };
+
+
 
 var joinGame = function(New) {
 	if (New) {
@@ -318,6 +348,7 @@ var discardTicket = function () {
 
 var getTickets = function () {
 	var tag = $.cookie("currentGame");
+	refreshGame(tag);
 	var game = getGames('play')[tag];
 	var url = "gettickets/"+tag;
 	var body = {};
@@ -331,14 +362,21 @@ var getTickets = function () {
 			return;
 		}
 		var ticketHtml = "Number of tickets : " + tickets.length + "<br><br>";
-		$("#ticketsDisplay").html(ticketHtml);
 		$("#ticketCount").html("Tickets you already have for this game : " + tickets.length);
 		$("#btnGetTicket").show();
 		$("#newTicketDisplay").html("");
 		$("#newticket").hide();
+		game = getGames('play')[tag];
+		var drawn = {};
+		game.drawnNumbers.forEach(function (elem, idx, arr) {
+			if (elem) {
+				drawn[elem] = elem;
+			}
+		});
 		for (var i = 0; i < tickets.length; i++) {
-			ticketHtml = ticketHtml + ticketToHtml(tickets[i]) + "<br>";
+			ticketHtml = ticketHtml + ticketToHtml(tickets[i], drawn) + "<br>";
 		}
+		$("#ticketsDisplay").html(ticketHtml);
 	});
 };
 
@@ -411,14 +449,19 @@ var getTicketsForPrint = function () {
 	window.open("printtickets.html?qty="+qty);
 };
 
-var ticketToHtml = function (ticket) {
+var ticketToHtml = function (ticket, drawn) {
 	var tabl = "";
 	if (ticket) {
 		tabl = "<TABLE class='ticket'>";
 		for (var i = 0; i < ticket[0].length; i++) {
 			tabl = tabl + "<TR>";
 			for (var j = 0; j < ticket.length; j++) {
-				tabl = tabl + "<TD class='ticketcell' width='11%' align='center'>" + (ticket[j][i] ? ticket[j][i] : "") + "</TD>";
+				if (ticket[j][i] && drawn && drawn[ticket[j][i]])
+					tabl = tabl + "<TD class='ticketcell' width='11%' align='center'>" 
+					+ "<span style='text-decoration:line-through;color:crimson;background-color:lime'>"
+					+ "<span style='color:black;'>" + (ticket[j][i] ? ticket[j][i] : "") + "</span></span></TD>";
+				else
+					tabl = tabl + "<TD class='ticketcell' width='11%' align='center'>" + (ticket[j][i] ? ticket[j][i] : "") + "</TD>";
 			}
 			tabl = tabl + "</TR>";
 		}
