@@ -4,10 +4,24 @@ exports.setup = function(io) {
 	socketio = io;
 	io.sockets.on('connection', function (socket) {
 		socket.emit('welcome', { message: 'Welcome to housie@home' });
-		socket.on('joingame', function (data) {
-			console.log(data);
+		socket.on('joingame', function (game) {
+			console.log(game);
 			//TODO: validation
-			socket.join(data.tag);
+			socket.player = game.playerName;
+			socket.tag = game.tag;
+			socket.join(game.tag);
+		});
+		socket.on('rungame', function (game) {
+			console.log(game);
+			//TODO: validation
+			socket.player = 'Admin';
+			socket.tag = game.tag;
+			socket.join(game.tag);
+		});
+		socket.on('chatMessage', function (message) {
+			console.log(message);
+			//TODO: validation
+			socket.broadcast.to(socket.tag).emit('chatMessage', {'sender':socket.player, 'message':message});
 		});
 	});
 };

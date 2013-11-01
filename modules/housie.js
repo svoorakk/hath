@@ -12,115 +12,132 @@ var housie = function () {
 	
 };
 
-housie.prototype.drawNumber = function(tag, adminPwd) {
-	var game = getGameAndValidateAccess(tag, 'Admin', adminPwd); 
-	if (game.error)
-		return game;
-	else {
-		game = game.drawNumber();
-		db.put('game', game.tag, game);
-		return getGameForPlayer(game);
-	}
-	
+housie.prototype.drawNumber = function(tag, adminPwd, callback) {
+	getGameAndValidateAccess(tag, 'Admin', adminPwd, function(err, game) {
+		if (game.error || err)
+			callback(err||game);
+		else {
+			game.drawNumber(function(err, thisGame) {
+				db.put('game', thisGame.tag, thisGame);
+				callback(err, getGameForPlayer(thisGame));
+			});
+		}	
+	}); 
 };
 
-housie.prototype.validateJoin = function(tag, playPwd, playerPwd, playerName) {
-	var game = getGameAndValidateAccess(tag, 'Game', playPwd, playerName); 
-	if (game.error)
-		return game;	
-	if (!game.players) 
-		game.players = {};
-	player = {};
-	if (!game.players[playerName]) {
-		if (game.gameStarted)
-			return {'error': 'Game already commenced. New players cannot join after the commencement of the game.'};
-		player.password = playerPwd;
-		player.tickets = [];
-		game.players[playerName] = player;
-	}
-	player = game.players[playerName];
-	if (player.password != playerPwd)
-		return {'error': 'Player password incorrect.'};
-	db.put('game', tag, game);
-	return getGameForPlayer(game);
-};
-
-housie.prototype.createGame = function (tag, adminPwd, playPwd, maxNo) {
-	if (!tag || tag.length === 0) {
-		return {error:"Game 'tag' needed to create game."};
-	}
-	var game = db.get('game', tag);
-	if (game) {
-		if (game.adminPwd === adminPwd && game.playPwd === playPwd )
-			return game;
-		else
-			return {error: 'An active game with same tag already exists. Please retry with a different tag.'};
-	}
-	if (!adminPwd) {
-		return {error: 'An administrator password is needed to create a game.'};
-	}
-	if (!playPwd) {
-		return {error: 'A player password is needed to create a game.'};
-	}
-	else {
-		game = new Game(tag, adminPwd, playPwd, maxNo);
+housie.prototype.validateJoin = function(tag, playPwd, playerPwd, playerName, callback) {
+	getGameAndValidateAccess(tag, 'Game', playPwd, playerName, function(err, game) {
+		if (game.error) {
+			callback(game);	
+			return;
+		}
+		if (!game.players) 
+			game.players = {};
+		player = {};
+		if (!game.players[playerName]) {
+			if (game.gameStarted) {
+				callback({'error': 'Game already commenced. New players cannot join after the commencement of the game.'});
+				return;
+			}
+			player.password = playerPwd;
+			player.tickets = [];
+			game.players[playerName] = player;
+		}
+		player = game.players[playerName];
+		if (player.password != playerPwd) {
+			callback({'error': 'Player password incorrect.'});
+			return;
+		}
 		db.put('game', tag, game);
-		return getGameForPlayer(game);
-	}
+		callback(null,getGameForPlayer(game));
+	}); 
 };
 
-housie.prototype.issueTicket = function (tag, playPwd, name, playerPwd, maxNo, rows, columns, numberCount, callback) {
-	var game = getGameAndValidateAccess(tag, 'Game', playPwd, name); 
-	if (game.error) {
-		callback(game);
+housie.prototype.createGame = function (tag, adminPwd, playPwd, maxNo, callback) {
+	if (!tag || tag.length === 0) {
+		callback({error:"Game 'tag' needed to create game."});
 		return;
 	}
-	if (!game.players) {
-		callback({error:'Player needs to join the game before tickets can be issued.'});
-		return;
-	}
-	if (!game.players[name]) {
-		callback({error:'Player needs to join the game before tickets can be issued.'});
-		return;
-	}
-	if (!playerPasswordMatch(game.players[name], playerPwd)) {
-		callback({error:'Player password does not match.'});
-		return;
-	}
-	if (game.gameStarted) {
-		callback({error:'Game already commenced. New tickets cannot be issued after the commencement of the game'});
-		return;
-	}
-	if (!name || name.length === 0) {
-		callback({error:"'name' needed to issue tickets"});
-		return;
-	}
-	Ticket(maxNo, rows, columns, numberCount, function (err, ticket) {
-		console.log('Ticket', ticket);
-		ticket.tag = tag;
-		ticket.name = name;
-		var ticket_tag = tag + '_' + name + '_' + playerPwd;
-		var tickets  = db.get('ticket', ticket_tag);
-		if (!Array.isArray(tickets))
-			tickets = [];
-		tickets.push(ticket);
-		db.put('ticket', ticket_tag, tickets);
-		callback(err, tickets);		
+	db.get('game', tag, function (err, game) {
+		var error = err;
+		if (game) {
+			if (!(game.adminPwd === adminPwd && game.playPwd === playPwd))
+				error = {error: 'An active game with same tag already exists. Please retry with a different tag.'};
+		}
+		if (!adminPwd) {
+			error = {error: 'An administrator password is needed to create a game.'};
+		}
+		if (!playPwd) {
+			error = {error: 'A player password is needed to create a game.'};
+		}
+		if (!error) {
+			game = new Game(tag, adminPwd, playPwd, maxNo);
+			db.put('game', tag, game);
+			callback(null, getGameForPlayer(game));
+		}
+		else {
+			callback(error);
+		}
 	});
 };
 
+housie.prototype.issueTicket = function (tag, playPwd, name, playerPwd, maxNo, rows, columns, numberCount, callback) {
+	getGameAndValidateAccess(tag, 'Game', playPwd, name, function(err, game) {
+		if (game.error) {
+			callback(game);
+			return;
+		}
+		if (!game.players) 
+			err = {error:'Player needs to join the game before tickets can be issued.'};
+		if (!game.players[name]) 
+			err = {error:'Player needs to join the game before tickets can be issued.'};
+		if (!playerPasswordMatch(game.players[name], playerPwd)) 
+			err = {error:'Player password does not match.'};
+		if (game.gameStarted) 
+			err = {error:'Game already commenced. New tickets cannot be issued after the commencement of the game'};
+		if (!name || name.length === 0) 
+			err = {error:"'name' needed to issue tickets"};
+		if (err) {
+			callback(err);
+			return;
+		}
+		Ticket(maxNo, rows, columns, numberCount, function (err, ticket) {
+			if (err) {
+				callback(err);
+				return;
+			}
+			ticket.tag = tag;
+			ticket.name = name;
+			var ticket_tag = tag + '_' + name + '_' + playerPwd;
+			var tickets  = db.get('ticket', ticket_tag);
+			if (!Array.isArray(tickets))
+				tickets = [];
+			tickets.push(ticket);
+			db.put('ticket', ticket_tag, tickets);
+			callback(null, tickets);		
+		});
+	}); 
+};
+
 housie.prototype.discardTicket = function (tag, name, playPwd, playerPwd) {
-	var game = getGameAndValidateAccess(tag, 'Game', playPwd, name); 
-	if (game.error)
-		return game;
-	if (!playerPasswordMatch(game.players[name], playerPwd))
-		return {error:"Player password does not match"};;
-	if (!name || name.length === 0) {
-		return {error:"'name' needed to discard tickets"};
-	}
-	var ticket_tag = tag + '_' + name + '_' + playerPwd;
-	db.put('ticket', ticket_tag, []);
-	return {message: 'Pending tickets discarded for '+ name + ' for the game ' + tag};
+	getGameAndValidateAccess(tag, 'Game', playPwd, name, function(err, game) {
+		if (game.error || err) {
+			callback(err || game);
+			return;
+		}
+		if (!playerPasswordMatch(game.players[name], playerPwd))
+			err = {error:"Player password does not match"};
+		if (!name || name.length === 0) {
+			err = {error:"'name' needed to discard tickets"};
+		}
+		if (err) {
+			callback(err);
+			return;
+		}
+		var ticket_tag = tag + '_' + name + '_' + playerPwd;
+		db.put('ticket', ticket_tag, []);
+		callback(null, {message: 'Pending tickets discarded for '+ name + ' for the game ' + tag});
+	}); 
 };
 
 housie.prototype.confirmTicket = function (tag, name, playPwd, playerPwd) {
@@ -232,48 +249,55 @@ housie.prototype.gameStats = function (tag, adminPwd) {
 	return stats;
 };
 
-housie.prototype.gameList =  function (filter, New) {
-	var games = db.get('game');
-	var tags = [];
-	if (games)
-		tags = Object.keys(games);
-	var list = [];
-	for (var i = 0; i < tags.length; i++) {
-		var tag = tags[i];
-		if (tag.toLowerCase().indexOf(filter.toLowerCase()) > -1) {
-			var game = games[tag];
-			console.log(game.gameStarted);
-			console.log(New);
-			console.log(((New && game.gameStarted) || (!New)));
-			if (((New && !game.gameStarted) || (!New)) && !game.finished) {
-				list.push(tag);
+housie.prototype.gameList =  function (filter, New, callback) {
+	db.get('game', null, function(err, games) {
+		if (err) {
+			callback(err);
+			return;
+		}
+		var tags = [];
+		if (games)
+			tags = Object.keys(games);
+		var list = [];
+		for (var i = 0; i < tags.length; i++) {
+			var tag = tags[i];
+			if (tag.toLowerCase().indexOf(filter.toLowerCase()) > -1) {
+				var game = games[tag];
+				if (((New && !game.gameStarted) || (!New)) && !game.finished) {
+					list.push(tag);
+				}
 			}
 		}
-	}
-	list.sort();
-	return list;
+		list.sort();
+		callback(null, list);
+	});
 };
 
-function getGameAndValidateAccess(tag, accessType, inPwd, name) {
+function getGameAndValidateAccess(tag, accessType, inPwd, name, callback) {
 	if (!tag || tag.length === 0) {
-		return {error:"Missing game 'tag'."};
+		callback({error:"Missing game 'tag'."});
 	}
-	var Game = db.get('game', tag);
-	if (!Game) 
-		return {error: 'No game found with the tag. Either incorrect tag was provided or all the numbers have been drawn'};
-	var gamePwd = '';
-	if (accessType === 'Admin')
-		gamePwd = Game.adminPwd;
-	if (accessType === 'Game')
-		gamePwd = Game.playPwd;
-	if (inPwd !== gamePwd)
-		return {error: 'Invalid ' + accessType + ' password.'};
-	if (accessType === 'Game' && (!name || name.length === 0))
-		return {error:"Player name required."};
-	if ((accessType === "Game") && Game.gameStarted === true)
-		if (!Game.players[name])
-			return {error:"Player cannot join/tickets issued after Game has started."};
-	return Game;	
+	db.get('game', tag, function(err, Game) {
+		if (err) {
+			callback(err);
+			return;
+		}
+		if (!Game) 
+			err = {error: 'No game found with the tag. Either incorrect tag was provided or all the numbers have been drawn'};
+		var gamePwd = '';
+		if (accessType === 'Admin')
+			gamePwd = Game.adminPwd;
+		if (accessType === 'Game')
+			gamePwd = Game.playPwd;
+		if (inPwd !== gamePwd)
+			err = {error: 'Invalid ' + accessType + ' password.'};
+		if (accessType === 'Game' && (!name || name.length === 0))
+			err = {error:"Player name required."};
+		if ((accessType === "Game") && Game.gameStarted === true)
+			if (!Game.players[name])
+				err = {error:"Player cannot join/tickets issued after Game has started."};
+		callback(err, (err ? null : Game));
+	});
 }
 
 var getGameForPlayer = function(game) {

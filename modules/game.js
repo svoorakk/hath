@@ -21,7 +21,7 @@ var Game = function (tag, adminPwd, playPwd, maxNo) {
     return this;
 };
 
-Game.prototype.drawNumber = function () {
+Game.prototype.drawNumber = function (callback) {
     //Draw number from remaining numbers
     if (!this.finished) {
         var idx = Math.floor(Math.random() * this.pendingNumbers.length);
@@ -33,7 +33,7 @@ Game.prototype.drawNumber = function () {
             this.finished = true;
         this.number = num;
     }
-    return this;
+    callback(null, this);
 };
 
 module.exports = Game;

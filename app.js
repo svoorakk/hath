@@ -30,6 +30,7 @@ app.configure('production', function(){
 });
 
 // Routes
+routes.init(io);
 
 app.get('/', routes.index);
 app.post('/creategame/:tag', routes.createGame);
@@ -42,6 +43,7 @@ app.post('/discardticket/:tag', routes.discardTicket);
 app.post('/getticketsforprint', routes.getTicketsForPrint);
 app.post('/getticketsforprint/:tag', routes.getTicketsForPrint);
 app.post('/getgame/:tag', routes.getGame);
+app.post('/abandongame/:tag', routes.abandonGame);
 app.post('/gamestats/:tag', routes.gameStats);
 app.post('/gamelist/:filter', routes.gameList);
 app.post('/newgamelist/:filter', routes.newGameList);

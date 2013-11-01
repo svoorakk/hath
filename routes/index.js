@@ -5,6 +5,12 @@
 var Housie = new require('../modules/housie');
 var housie = new Housie();
 
+var socketio;
+
+exports.init = function(io){
+	socketio = io;
+};
+
 exports.index = function(req, res){
   res.render('index', { title: 'Node Express' });
 };
@@ -19,13 +25,17 @@ exports.createGame = function(req, res){
 	var adminPwd = req.body.adminpwd;
 	var playerPwd = req.body.playerpwd;
 	var maxNos = req.body.maxnos;
-	res.send(housie.createGame(tag, adminPwd, playerPwd, maxNos));
+	housie.createGame(tag, adminPwd, playerPwd, maxNos, function (err, game) {
+		res.send(err ? err : game);
+	});
 };
 
 exports.drawNumber = function(req, res){
 	var tag = req.params.tag;
 	var adminPwd = req.body.adminpwd;
-	res.send(housie.drawNumber(tag, adminPwd));
+	housie.drawNumber(tag, adminPwd, function (err, game) {
+		res.send(err ? err : game);
+	});
 };
 
 exports.validateJoin = function(req, res){
@@ -34,7 +44,9 @@ exports.validateJoin = function(req, res){
 	var playerName = req.body.playername;
 	var gamePwd = req.body.gamepwd;
 	var playerPwd = req.body.playerpwd;
-	res.send(housie.validateJoin(tag, gamePwd, playerPwd, playerName));
+	housie.validateJoin(tag, gamePwd, playerPwd, playerName, function(err, game) {
+		res.send(err ? err : game);
+	});
 };
 
 exports.issueTicket = function(req, res){
@@ -46,12 +58,8 @@ exports.issueTicket = function(req, res){
 	var rows = req.body.rows;
 	var columns = req.body.columns;
 	var numberCount = req.body.numcount;
-	housie.issueTicket(tag, gamePwd, name, playerPwd, maxNo, rows, columns, numberCount, function(err, result) {
-		if (err)
-			res.send(err);
-		else
-			res.send(result);
-			
+	housie.issueTicket(tag, gamePwd, name, playerPwd, maxNo, rows, columns, numberCount, function(err, ticket) {
+		res.send(err ? err : ticket);
 	});
 };
 
@@ -102,10 +110,20 @@ exports.gameStats = function(req, res) {
 
 exports.gameList = function(req, res) {
 	var filter = req.params.filter;
-	res.send(housie.gameList(filter));
+	housie.gameList(filter, false, function (err, list) {
+		if (err) 
+			res.send(err);
+		else
+			res.send(list);
+	});
 };
 
 exports.newGameList = function(req, res) {
 	var filter = req.params.filter;
-	res.send(housie.gameList(filter, true));
+	housie.gameList(filter, true, function (err, list) {
+		if (err) 
+			res.send(err);
+		else
+			res.send(list);
+	});
 };

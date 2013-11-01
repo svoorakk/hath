@@ -3,14 +3,14 @@ var memory = {};
 
 var Datastore = function () {};
 
-Datastore.prototype.get = function (collection, id) {
+Datastore.prototype.get = function (collection, id, callback) {
+	var item = null;
 	if (memory[collection])
 		if (id)
-			return memory[collection][id];
+			item = memory[collection][id];
 		else
-			return memory[collection];
-	else
-		return null;
+			item = memory[collection];
+	callback(null, item);
 };
 
 Datastore.prototype.put = function (collection, id, item) {
@@ -26,4 +26,4 @@ Datastore.prototype.remove = function (collection, id) {
 
 module.exports = function () {
 	return new Datastore();
-}
+};
