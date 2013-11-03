@@ -35,6 +35,7 @@ exports.drawNumber = function(req, res){
 	var adminPwd = req.body.adminpwd;
 	housie.drawNumber(tag, adminPwd, function (err, game) {
 		res.send(err ? err : game);
+		socketio.broadcast(tag, 'numberDrawn', game);
 	});
 };
 
@@ -68,7 +69,9 @@ exports.discardTicket = function(req, res){
 	var name = req.body.name;
 	var playerPwd = req.body.playerpwd;
 	var gamePwd = req.body.gamepwd;
-	res.send(housie.discardTicket(tag, name, gamePwd, playerPwd));
+	housie.discardTicket(tag, name, gamePwd, playerPwd, function(err, msg) {
+		res.send(err ? err : msg);
+	});
 };
 
 exports.confirmTicket = function(req, res){
@@ -76,7 +79,9 @@ exports.confirmTicket = function(req, res){
 	var name = req.body.name;
 	var playerPwd = req.body.playerpwd;
 	var gamePwd = req.body.gamepwd;
-	res.send(housie.confirmTicket(tag, name, gamePwd, playerPwd));
+	housie.confirmTicket(tag, name, gamePwd, playerPwd, function(err, msg) {
+		res.send(err ? err : msg);
+	});
 };
 
 exports.getTickets = function(req, res){
@@ -84,7 +89,9 @@ exports.getTickets = function(req, res){
 	var name = req.body.name;
 	var playerPwd = req.body.playerpwd;
 	var gamePwd = req.body.gamepwd;
-	res.send(housie.getTickets(tag, name, gamePwd, playerPwd));
+	housie.getTickets(tag, name, gamePwd, playerPwd, function(err, tickets) {
+		res.send(err ? err : tickets);
+	});
 };
 
 exports.getTicketsForPrint = function(req, res) {
@@ -92,20 +99,24 @@ exports.getTicketsForPrint = function(req, res) {
 	var adminPwd = req.body.adminpwd;
 	var qty = req.body.qty;
 	housie.getTicketsForPrint(tag, adminPwd, qty, function(err, result) {
-		res.render('ticketsforprint', {tickets: result});
+		res.render('ticketsforprint', {'tickets': result, 'err' : err});
 	});
 };
 
 exports.getGame = function(req, res) {
 	var tag = req.params.tag;
 	var gamePwd = req.body.gamepwd;
-	res.send(housie.getGame(tag, gamePwd));
+	housie.getGame(tag, gamePwd, function(err, game) {
+		res.send(err ? err : game);
+	});
 };
 
 exports.gameStats = function(req, res) {
 	var tag = req.params.tag;
 	var adminPwd = req.body.adminpwd;
-	res.send(housie.gameStats(tag, adminPwd));
+	housie.gameStats(tag, adminPwd, function(err, stats) {
+		res.send(err ? err : stats);
+	});
 };
 
 exports.gameList = function(req, res) {
@@ -125,5 +136,16 @@ exports.newGameList = function(req, res) {
 			res.send(err);
 		else
 			res.send(list);
+	});
+};
+
+exports.log = function(req, res) {
+	var tag = req.params.tag;
+	var adminPwd = req.body.adminpwd;
+	housie.log(tag, adminPwd, function (err, log) {
+		if (err) 
+			res.send(err);
+		else
+			res.send(log);
 	});
 };

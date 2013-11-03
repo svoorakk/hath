@@ -20,6 +20,9 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body style="background-color:white">
+  <% if (err) { %>
+  		<%= err.error %>
+	<% } %>
   <% if (tickets) { %>
   	<table cellspacing="50">
 	<% for(var i=0; i<tickets.length/2; i++) {%>

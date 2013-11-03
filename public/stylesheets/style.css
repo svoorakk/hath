@@ -91,15 +91,15 @@ h2 {font-size:120%; text-align:center; margin-bottom:2%;}
 
 #draw {
 	text-align:center;
+	width:100%;
 }
 
 #numberDisplay {
 	background-color: #AAAAAA;
 	font-size:1000%;
-	width:30%;
 	text-align:center;
-	margin-left:auto;
-	margin-right:auto;
+	width:400px;
+	height:300px;
 }
 
 .statuslist { 
@@ -121,4 +121,13 @@ h2 {font-size:120%; text-align:center; margin-bottom:2%;}
 
 .ticketDrawnNumber {
 	text-decoration:line-through;
+}
+
+.log TABLE {
+	font-size:small;
+}
+
+.log TD {
+	background-color:silver;
+	font-size:medium;
 }

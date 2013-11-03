@@ -66,8 +66,8 @@ var createGame = function() {
 	//display wait animation
 	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
 		game = JSON.parse(game);
-		if (game.error) {
-			alert(game.error);
+		if (err || game.error) {
+			toDialog("Create Game Error!", JSON.stringify(err) || game.error);
 			return;
 		}
 		game.adminPwd = adPwd;
@@ -80,6 +80,7 @@ var createGame = function() {
 };
 
 var drawNumber = function() {
+	$( "#numberDisplay" ).toggle( "explode" );
 	var tag = $.cookie("currentGame");
 	var localgame = getGames('run')[tag];
 	var url = "drawnumber/"+tag;
@@ -87,8 +88,8 @@ var drawNumber = function() {
 	body.adminpwd = localgame.adminPwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
 		game = JSON.parse(game);
-		if (game.error) {
-			alert(game.error);
+		if (err || game.error) {
+			toDialog("Draw Number Error!", JSON.stringify(err) || game.error);
 			return;
 		}
 		localgame.drawnNumbers = game.drawnNumbers;
@@ -97,8 +98,9 @@ var drawNumber = function() {
 		localgame.gameStarted = game.gameStarted;
 		addGame(localgame, 'run');
 		$("#numberDisplay").html(game.number);
+		$("#numberDisplay" ).toggle( "explode" );
 		if (game.finished)
-			alert("Game Finished");
+			toDialog("Game update", "Game completed. All numbers are drawn");
 	});	
 };
 
@@ -109,8 +111,9 @@ var refreshGame = function (tag) {
 	body.gamepwd = localgame.gamePwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, response) {
 		response = JSON.parse(response);
-		if (response.error) {
-			alert(response.error);
+		var game = response.game;
+		if (err || game.error) {
+			toDialog("Game Update Error!", JSON.stringify(err) || game.error);
 			return;
 		}
 		var game = response.game;
@@ -220,6 +223,9 @@ var activateTab =  function (type, index) {
 		if (index === 3) {
 			updateStats();
 		}
+		if (index === 4) {
+			updateLog();
+		}
 	}
 };
 
@@ -266,8 +272,8 @@ var joinGame = function(New) {
 	//display wait animation
 	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
 		game = JSON.parse(game);
-		if (game.error) {
-			alert(game.error);
+		if (err || game.error) {
+			toDialog("Join Game Error!", JSON.stringify(err) || game.error);
 			return;
 		}
 		//create browser variable
@@ -290,8 +296,8 @@ var newTicket = function () {
 	body.gamepwd = game.gamePwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, tickets) {
 		tickets = JSON.parse(tickets);
-		if (tickets.error) {
-			alert(tickets.error);
+		if (err || game.error) {
+			toDialog("New Ticket Error!", JSON.stringify(err) || game.error);
 			return;
 		}
 		$("#newticket").show();
@@ -310,12 +316,13 @@ var confirmTicket = function () {
 	body.gamepwd = game.gamePwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
 		data = JSON.parse(data);
-		if (data.error) {
-			alert(data.error);
+		if (err || game.error) {
+			toDialog("Confirm Ticket Error!", JSON.stringify(err) || game.error);
 			return;
 		}
 		if (data.message) {
-			alert(data.message);
+			toDialog("Confirm Ticket", data.message);
+			return;
 		}
 		$("#ticketCount").html("Tickets you already have for this game : " + data.ticketCount);
 		$("#btnGetTicket").show();
@@ -333,12 +340,13 @@ var discardTicket = function () {
 	body.playerpwd = game.playerPwd;
 	body.gamepwd = game.gamePwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
-		if (data.error) {
-			alert(data.error);
+		if (err || game.error) {
+			toDialog("Discard Ticket Error!", JSON.stringify(err) || game.error);
 			return;
 		}
 		if (data.message) {
-			alert(data.message);
+			toDialog("Discard Ticket", data.message);
+			return;
 		}
 		$("#btnGetTicket").show();
 		$("#newTicketDisplay").html("");
@@ -357,8 +365,8 @@ var getTickets = function () {
 	body.gamepwd = game.gamePwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, tickets) {
 		tickets = JSON.parse(tickets);
-		if (tickets.error) {
-			alert(tickets.error);
+		if (err || game.error) {
+			toDialog("Get Tickets Error!", JSON.stringify(err) || game.error);
 			return;
 		}
 		var ticketHtml = "Number of tickets : " + tickets.length + "<br><br>";
@@ -425,6 +433,10 @@ var updateStats = function () {
 	var body = {};
 	body.adminpwd = game.adminPwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, stats) {
+		if (err || game.error) {
+			toDialog("Game Stats Error!", JSON.stringify(err) || game.error);
+			return;
+		}
 		stats = JSON.parse(stats);
 		var statsHtml = "<table><tr class='ui-state-default'><td>Numbers Drawn:</td><td>"+stats.numbersDrawnCount+"</td></tr>"
 						+ "<tr class='ui-state-default'><td>Numbers Pending:</td><td>" + stats.numbersPendingCount+"</td></tr></table>"
@@ -437,8 +449,31 @@ var updateStats = function () {
 						+ "</td><td>" + stats.players[i].ticketCount + "</td></tr>";
 			ticketCount = ticketCount + stats.players[i].ticketCount
 		}
-		statsHtml = statsHtml + "<tr class='ui-state-default'><td></td><td>" + stats.players.length + " Players</td><td>" + ticketCount + "</td></tr></table>"  
+		statsHtml = statsHtml + "<tr class='ui-state-default'><td></td><td>" + stats.players.length + " Players</td><td>" + ticketCount + "</td></tr>"  
+		statsHtml = statsHtml + "<tr class='ui-state-default'><td></td><td>Printed Tickets:</td><td>" + stats.printTicketCount+"</td></tr></table>";
 		$("#stats").html(statsHtml);
+	});
+};
+
+var updateLog = function () {
+	var tag = $.cookie("currentGame");
+	game = getGames('run')[tag];
+	var url = "log/"+tag;
+	var body = {};
+	body.adminpwd = game.adminPwd;
+	xmlHttpPost(url, JSON.stringify(body), function(err, log) {
+		if (err || game.error) {
+			toDialog("Get Log Error!", JSON.stringify(err) || game.error);
+			return;
+		}
+		log = JSON.parse(log);
+		var logHtml = "<table class='log'><tr class='ui-widget-content'><td class='log'>Date</td><td class='log'>Event</td><td class='log'>Data</td></tr>";
+		for (var i = log.length-1; i > -1 ; i--) {
+			logHtml = logHtml + "<tr><td>"+ log[i].eventDate  + "</td><td>" + log[i].eventType  
+						+ "</td><td>" + log[i].eventData + "</td></tr>";
+		}
+		logHtml = logHtml + "</table>";
+		$("#log").html(logHtml);
 	});
 };
 
@@ -468,4 +503,9 @@ var ticketToHtml = function (ticket, drawn) {
 		tabl = tabl + "</TABLE>";
 	}
 	return tabl;
+};
+
+var toDialog = function (titleText, messageText) {
+	$("#dialog").html(messageText);
+	$("#dialog").dialog({title: titleText, width: 'auto', modal: true});
 };

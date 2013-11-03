@@ -47,6 +47,7 @@ app.post('/abandongame/:tag', routes.abandonGame);
 app.post('/gamestats/:tag', routes.gameStats);
 app.post('/gamelist/:filter', routes.gameList);
 app.post('/newgamelist/:filter', routes.newGameList);
+app.post('/log/:tag', routes.log);
 
 socketServer.setup(io);
 

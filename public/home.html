@@ -49,6 +49,7 @@
     				<li><a href="#draw">Draw Numbers</a></li>
     				<li><a href="#runStatus">View Status</a></li>
     				<li><a href="#stats">Game Stats</a></li>
+    				<li><a href="#log">Game Log</a></li>
   			  	</ul>
   				<div id="tickets">
   					Players who are online can join the game and get tickets using the 'Play' option from home page. However for 
@@ -67,8 +68,10 @@
 					</p>
   				</div>
   				<div id="draw">
-					<div id="numberDisplay">&nbsp;
-					</div>
+  					<center>
+						<div id="numberDisplay">&nbsp;
+						</div>
+  					</center>
    						<input type="button" onclick="drawNumber()" value="Draw a Number" id="btnDrawNbr">
   				</div>
   				<div id="runStatus">
@@ -77,6 +80,8 @@
 					</ul>
   				</div>
   				<div id="stats">
+  				</div>
+  				<div id="log" style="height:300px;overflow:scroll;">
   				</div>
 			</div>
     		<div>&nbsp;</div>
@@ -135,9 +140,9 @@
     	</div>
     	<div id="status">
     	
-    	
     	</div>
     </div>
+    <div id="dialog" style="font-size:small"></div>
 <script>
 $("input[type=button]").button();
 $("#runTabs").tabs({  

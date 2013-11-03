@@ -19,6 +19,14 @@ Datastore.prototype.put = function (collection, id, item) {
 	memory[collection][id] = item;
 };
 
+Datastore.prototype.append = function (collection, id, item) {
+	if (!memory[collection])
+		memory[collection] = {};
+	if (!memory[collection][id])
+		memory[collection][id] = [];
+	memory[collection][id].push(item);
+};
+
 Datastore.prototype.remove = function (collection, id) {
 	if (memory[collection] && memory[collection][id])
 		delete memory[collection][id];
