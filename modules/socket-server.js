@@ -1,17 +1,17 @@
 var socketio;
 
-exports.setup = function(io) {
+var socketServer = function (io) {
 	socketio = io;
-	io.sockets.on('connection', function (socket) {
+	socketio.sockets.on('connection', function (socket) {
 		socket.emit('welcome', { message: 'Welcome to housie@home' });
-		socket.on('joingame', function (game) {
+		socket.on('joinGame', function (game) {
 			console.log(game);
 			//TODO: validation
 			socket.player = game.playerName;
 			socket.tag = game.tag;
 			socket.join(game.tag);
 		});
-		socket.on('rungame', function (game) {
+		socket.on('runGame', function (game) {
 			console.log(game);
 			//TODO: validation
 			socket.player = 'Admin';
@@ -26,13 +26,17 @@ exports.setup = function(io) {
 	});
 };
 
-exports.clearRoom = function(tag) {
+socketServer.prototype.clearRoom = function(tag) {
 	var sockets = socketio.sockets.clients(tag);
 	for (var i = 0; i < sockets.length; i++) {
 		sockets[i].leave(tag);
 	}
 };
 
-exports.broadcast = function(tag, eventName, message) {
+socketServer.prototype.broadcast = function(tag, eventName, message) {
 	socketio.sockets.in(tag).emit(eventName, message);
+};
+
+module.exports = function (io) {
+	return new socketServer(io);
 };

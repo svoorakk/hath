@@ -248,7 +248,7 @@ var populateGameList = function(target, games) {
 	}
 };
 
-
+var socket; 
 
 var joinGame = function(New) {
 	if (New) {
@@ -283,8 +283,13 @@ var joinGame = function(New) {
 		addGame(game, 'play');
 		setupPlayTabs(game);
 		activateTab('play', 0);
-	});
-}
+		socket = io.connect('http://localhost:3000');
+		 	socket.on('numberDrawn', function (game) {
+		 		updateTickets(game.number);
+		 	});	
+			socket.emit('joinGame', { 'tag': tag, 'gamePwd': gamePwd, playerName: name, playPwd: playerPwd });
+		 });
+};
 
 var newTicket = function () {
 	var tag = $.cookie("currentGame");
@@ -322,7 +327,6 @@ var confirmTicket = function () {
 		}
 		if (data.message) {
 			toDialog("Confirm Ticket", data.message);
-			return;
 		}
 		$("#ticketCount").html("Tickets you already have for this game : " + data.ticketCount);
 		$("#btnGetTicket").show();
@@ -346,7 +350,6 @@ var discardTicket = function () {
 		}
 		if (data.message) {
 			toDialog("Discard Ticket", data.message);
-			return;
 		}
 		$("#btnGetTicket").show();
 		$("#newTicketDisplay").html("");
@@ -491,12 +494,11 @@ var ticketToHtml = function (ticket, drawn) {
 		for (var i = 0; i < ticket[0].length; i++) {
 			tabl = tabl + "<TR>";
 			for (var j = 0; j < ticket.length; j++) {
+				var num = (ticket[j][i] ? ticket[j][i] : "");
+				tabl = tabl + "<TD class='ticketcell' width='11%' align='center'><span id='ticketCell_" + num + "'";
 				if (ticket[j][i] && drawn && drawn[ticket[j][i]])
-					tabl = tabl + "<TD class='ticketcell' width='11%' align='center'>" 
-					+ "<span style='text-decoration:line-through;color:crimson;background-color:lime'>"
-					+ "<span style='color:black;'>" + (ticket[j][i] ? ticket[j][i] : "") + "</span></span></TD>";
-				else
-					tabl = tabl + "<TD class='ticketcell' width='11%' align='center'>" + (ticket[j][i] ? ticket[j][i] : "") + "</TD>";
+					tabl = tabl + " style='text-decoration:line-through;color:crimson;background-color:lime'";
+				tabl = tabl + "><span style='color:black;'>" + num + "</span></span></TD>";
 			}
 			tabl = tabl + "</TR>";
 		}
@@ -508,4 +510,12 @@ var ticketToHtml = function (ticket, drawn) {
 var toDialog = function (titleText, messageText) {
 	$("#dialog").html(messageText);
 	$("#dialog").dialog({title: titleText, width: 'auto', modal: true});
+};
+
+var updateTickets = function(num) {
+	var id = '#ticketCell_'+num;
+	$( id ).effect( "shake", {}, 500, function () {
+		$( id ).css({'text-decoration':'line-through','color':'crimson', 'background-color':'lime'});
+		$( id ).effect( "shake", {}, 500, function () {});
+	});
 };

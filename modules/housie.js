@@ -53,9 +53,9 @@ housie.prototype.validateJoin = function(tag, playPwd, playerPwd, playerName, ca
 		}
 		db.put('game', tag, game);
 		if (playerExists)
-			db.append('log', tag, {eventType: 'Player Join', eventData: playerName, eventDate: new Date()});
-		else
 			db.append('log', tag, {eventType: 'Player re-join', eventData: playerName, eventDate: new Date()});
+		else
+			db.append('log', tag, {eventType: 'Player join', eventData: playerName, eventDate: new Date()});
 		callback(null,getGameForPlayer(game));
 	}); 
 };

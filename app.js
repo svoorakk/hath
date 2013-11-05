@@ -5,7 +5,7 @@
 
 var express = require('express')
  , routes = require('./routes')
- , socketServer = require('./modules/socket-server');
+ , ss = require('./modules/socket-server');
 
 var app = module.exports = express.createServer()
  ,  io = require('socket.io').listen(app);
@@ -29,8 +29,10 @@ app.configure('production', function(){
   app.use(express.errorHandler());
 });
 
+socketServer = new ss(io);
+
 // Routes
-routes.init(io);
+routes.init(socketServer);
 
 app.get('/', routes.index);
 app.post('/creategame/:tag', routes.createGame);
@@ -48,8 +50,6 @@ app.post('/gamestats/:tag', routes.gameStats);
 app.post('/gamelist/:filter', routes.gameList);
 app.post('/newgamelist/:filter', routes.newGameList);
 app.post('/log/:tag', routes.log);
-
-socketServer.setup(io);
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
