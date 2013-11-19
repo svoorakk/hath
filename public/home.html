@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, user-scalable=no">
 <title>housie@home</title>
 <link  rel="stylesheet" type="text/css"  href="stylesheets/style.css">
 <link  rel="stylesheet" type="text/css"  href="scripts/lib/jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css">
@@ -33,13 +34,13 @@
 			<h2>Run a Game</h2> 
     		<div id="runNew"  class="panel2">
     		<h3>Create a new game :</h3>
-    		Enter a tag for the Game : <input type="text" id="newTag" name="newTag" value="" 
+    		Enter a tag for the Game : <input type="text" id="newTag" name="newTag" value="" size="20" 
     									title="Enter a name for the game, which you can easily recall. If you forget this you cannot retrieve the game again.">
     									<br>
-    		Enter a admin password for the Game : <input type="password" id="newAdminPwd" name="newAdminPwd" value=""
+    		Enter a admin password for the Game : <input type="password" id="newAdminPwd" name="newAdminPwd" value="" size="10"
     									title="Admin password is needed to run the game, print game tickets and draw the numbers. Do not share it with the players.">
     									<br>
-    		Enter a player password for the Game : <input type="password" id="newPlayPwd" name="newPlayPwd" value=""
+    		Enter a player password for the Game : <input type="password" id="newPlayPwd" name="newPlayPwd" value="" size="10"
     									title="Player password is needed for players to join a game, get tickets and to follow the game. Once game is created, share it with the players.">
     									<br>
     		<input type="button" value="Create" onclick="createGame();">
@@ -69,15 +70,11 @@
 					</p>
   				</div>
   				<div id="draw">
-  					<center>
-						<div id="numberDisplay">&nbsp;
-						</div>
-  					</center>
+					<div id="numberDisplay">&nbsp;
+					</div>
    						<input type="button" onclick="drawNumber()" value="Draw a Number" id="btnDrawNbr">
   				</div>
-  				<div id="runStatus">
-					Status of the Game : 
-					<ul id="runStatuslist" class="statuslist">
+  				<div id="runStatus">Status of the Game : <ul id="runStatuslist" class="statuslist">
 					</ul>
   				</div>
   				<div id="stats">

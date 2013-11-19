@@ -417,7 +417,8 @@ var updateStatus = function (type, game) {
 	statusList.innerHTML = '';
 	for (var i = 1; i < max+1; i++) {
 		var li = document.createElement('li');
-		li.innerText = i;
+		li.id = "statusCell_"+i;
+		li.innerHTML = i;
 		if (drawn[i]) {
 			li.style["background-color"] = "lime";
 		}
@@ -513,9 +514,10 @@ var toDialog = function (titleText, messageText) {
 };
 
 var updateTickets = function(num) {
-	var id = '#ticketCell_'+num;
-	$( id ).effect( "shake", {}, 500, function () {
-		$( id ).css({'text-decoration':'line-through','color':'crimson', 'background-color':'lime'});
-		$( id ).effect( "shake", {}, 500, function () {});
+	var ticketcellid = '#ticketCell_'+num;
+	$( ticketcellid ).effect( "shake", {}, 500, function () {
+		$( ticketcellid ).css({'text-decoration':'line-through','color':'crimson', 'background-color':'lime'});
+		$( ticketcellid ).effect( "shake", {}, 500, function () {});
 	});
+	$( "#statusCell_"+num ).css({'background-color':'lime'});
 };
