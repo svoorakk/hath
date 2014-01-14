@@ -115,7 +115,7 @@ var refreshGame = function (tag) {
 		if (err || game.error) {
 			toDialog("Game Update Error!", JSON.stringify(err) || game.error);
 			return;
-		}
+		};
 		var game = response.game;
 		localgame.drawnNumbers = game.drawnNumbers;
 		localgame.pendingNumbers = game.pendingNumbers;
@@ -283,12 +283,12 @@ var joinGame = function(New) {
 		addGame(game, 'play');
 		setupPlayTabs(game);
 		activateTab('play', 0);
-		socket = io.connect('http://localhost:3000');
-		 	socket.on('numberDrawn', function (game) {
-		 		updateTickets(game.number);
-		 	});	
-			socket.emit('joinGame', { 'tag': tag, 'gamePwd': gamePwd, playerName: name, playPwd: playerPwd });
-		 });
+		socket = io.connect();
+		socket.on('numberDrawn', function (game) {
+		 	updateTickets(game.number);
+		 });	
+		socket.emit('joinGame', { 'tag': tag, 'gamePwd': gamePwd, playerName: name, playPwd: playerPwd });
+	});
 };
 
 var newTicket = function () {
