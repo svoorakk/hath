@@ -134,8 +134,7 @@ var refreshGame = function (tag) {
 var setupRunTabs = function(game) {
 	$.cookie("currentGame", game.tag);
 	//display next screen
-	$("#runNew").hide();
-	$("#runCurrent").hide();
+	$("#runAccordion").hide();
 	$("#runTabs").show();
 	//update status panel
 };
@@ -143,8 +142,7 @@ var setupRunTabs = function(game) {
 var setupPlayTabs = function(game) {
 	$.cookie("currentGame", game.tag);
 	//display next screen
-	$("#playNew").hide();
-	$("#playCurrent").hide();
+	$("#playAccordion").hide();
 	$("#playTabs").show();
 	//update status panel
 };
