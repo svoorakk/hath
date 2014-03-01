@@ -10,9 +10,12 @@ var express = require('express')
 var app = module.exports = express.createServer()
  ,  io = require('socket.io').listen(app);
 
+
+
 // Configuration
 
 app.configure(function(){
+  app.use(express.logger());
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.use(express.bodyParser());
@@ -53,4 +56,9 @@ app.post('/log/:tag', routes.log);
 
 app.listen(3000, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+});
+
+process.on('uncaughtException', function (err) {
+	console.log('error','Caught exception: ' + err);
+	console.log('error',err.stack);
 });
