@@ -1,13 +1,15 @@
 html {
 	min-height:100%;
 	position:relative;
+	text-align:center;
 }
 body {
 	height:100%;
 	font-family: verdana;
+	font-size:.8em;
 }
 h1 {
-	font-size:400%; 
+	font-size:2em; 
 	text-align:center;
 	font-family:"Brush Script MT", cursive;
     text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff2d95, 0 0 30px #ff2d95, 0 0 40px #ff2d95, 0 0 50px #ff2d95, 0 0 75px #ff2d95;
@@ -21,7 +23,7 @@ h1:hover {
 }
 
 h2 {
-	font-size:120%; 
+	font-size:1.2em; 
 	text-align:center; 
 	margin-bottom:2%;
 }
@@ -35,6 +37,9 @@ h2 {
     height:100%;
   	background-color:#A9E2F3;
 	vertical-align: middle;
+	max-width:1000px;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 #home {
@@ -57,7 +62,7 @@ h2 {
 	text-align:center;
 	width:100%;
 	padding:0%;
-	border-radius:4%;
+	border-radius:10px;
 }
 .mainBtn:hover {
 	background-color:#04B4AE;
@@ -93,7 +98,7 @@ h2 {
 
 .ticket {
 	background-color: #00AAAA;
-	font-size:1em;
+	font-size:1.5em;
 }
 
 .ticketcell {
@@ -104,15 +109,19 @@ h2 {
 #draw {
 	text-align:center;
 	width:100%;
+	height:95%;
 }
 
 #numberDisplay {
-	background-color: #AAAAAA;
-	font-size:1000%;
+	background-color: rgb(225,225,225);
+	font-size:10em;
 	text-align:center;
-	width:400px;
-	height:300px;
+	width:70%;
+	height:80%;
     margin: 0 auto;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;	
 }
 
 .statuslist { 
@@ -126,9 +135,11 @@ h2 {
 .statuslist li { 
 	margin: 3px; 
 	padding: 1px; 
-	font-size: 1em; 
+	font-size: .8em; 
+	font-weight:bold;
 	text-align: center;
-	width: 50px;
+	width: 10%;
+	max-width:2em;
 	display:inline-block;
 }
 
@@ -137,29 +148,19 @@ h2 {
 }
 
 .log TABLE {
-	font-size:small;
+	font-size:.6em;
 }
 
 .log TD {
 	background-color:silver;
-	font-size:medium;
+	font-size:.6em;
 }
 
-@media only screen and (min-width: 810px) {	  
-	h1 {font-size:400%; }
-	body {font-size:150%;}
-	#numberDisplay {width:400px; height:300px;}
-	.log TD {font-size:medium;}
+.help {
+	background-image: url(images/ui-icons_0078ae_256x240.png);
+	background-position:  -48px -144px;
 }
-@media only screen and (min-width: 440px) and (max-width: 809px){	  
-	h1 {font-size:300%; }
-	body {font-size:100%;}
-	#numberDisplay {width:300px; height:225px;}
-	.log TD {font-size:medium;}
-}
-@media only screen and (max-width: 439px){	  
-	h1 {font-size:250%; }
-	body {font-size:75%;}
-	#numberDisplay {width:225px; height:175px;}
-	.log TD {font-size:60%;}
+
+@media only screen and (min-width: 1000px) {
+	#main {width:1000px}
 }

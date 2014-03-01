@@ -80,7 +80,8 @@ var createGame = function() {
 };
 
 var drawNumber = function() {
-	$( "#numberDisplay" ).toggle( "explode" );
+	//$( "#numberDisplay" ).toggle( "explode" );
+	var timer = numberAnimate(document.getElementById('numberDisplay'));
 	var tag = $.cookie("currentGame");
 	var localgame = getGames('run')[tag];
 	var url = "drawnumber/"+tag;
@@ -97,10 +98,14 @@ var drawNumber = function() {
 		localgame.finished = game.finished;
 		localgame.gameStarted = game.gameStarted;
 		addGame(localgame, 'run');
-		$("#numberDisplay").html(game.number);
-		$("#numberDisplay" ).toggle( "explode" );
-		if (game.finished)
-			toDialog("Game update", "Game completed. All numbers are drawn");
+		var dur = Math.ceil(Math.random()*3000);
+		setTimeout(function () {
+			clearInterval(timer);
+			$("#numberDisplay").html(game.number);
+			if (game.finished)
+				toDialog("Game update", "Game completed. All numbers are drawn");			
+		}, dur);
+		//$("#numberDisplay" ).toggle( "explode" );
 	});	
 };
 
@@ -115,8 +120,7 @@ var refreshGame = function (tag) {
 		if (err || game.error) {
 			toDialog("Game Update Error!", JSON.stringify(err) || game.error);
 			return;
-		};
-		var game = response.game;
+		}
 		localgame.drawnNumbers = game.drawnNumbers;
 		localgame.pendingNumbers = game.pendingNumbers;
 		localgame.finished = game.finished;
@@ -249,18 +253,22 @@ var populateGameList = function(target, games) {
 var socket; 
 
 var joinGame = function(New) {
+	var tag; 
+	var name;
+	var gamePwd;
+	var playerPwd;
 	if (New) {
-		var tag = document.getElementById("joinTag").value;
-		var name = document.getElementById("joinName").value;
-		var gamePwd = document.getElementById("joinGamePwd").value;
-		var playerPwd = document.getElementById("joinPlayerPwd").value;
+		tag = document.getElementById("joinTag").value;
+		name = document.getElementById("joinName").value;
+		gamePwd = document.getElementById("joinGamePwd").value;
+		playerPwd = document.getElementById("joinPlayerPwd").value;
 	}
 	else {
-		var tag = document.getElementById("playGameList").value;
+		tag = document.getElementById("playGameList").value;
 		var game = getGames('play')[tag];
-		var name = game.playerName;
-		var gamePwd = game.gamePwd;
-		var playerPwd = game.playerPwd;
+		name = game.playerName;
+		gamePwd = game.gamePwd;
+		playerPwd = game.playerPwd;
 	}
 	var url = "validatejoin/"+tag;
 	var body = {};
@@ -283,8 +291,8 @@ var joinGame = function(New) {
 		activateTab('play', 0);
 		socket = io.connect();
 		socket.on('numberDrawn', function (game) {
-		 	updateTickets(game.number);
-		 });	
+			updateTickets(game.number);
+		});	
 		socket.emit('joinGame', { 'tag': tag, 'gamePwd': gamePwd, playerName: name, playPwd: playerPwd });
 	});
 };
@@ -418,10 +426,10 @@ var updateStatus = function (type, game) {
 		li.id = "statusCell_"+i;
 		li.innerHTML = i;
 		if (drawn[i]) {
-			li.style["background-color"] = "lime";
+			li.style["background-color"] = "rgb(166,240,166)";
 		}
 		else {
-			li.style["background-color"] = "red";
+			li.style["background-color"] = "rgb(240,166,166)";
 		}
 		li.class = "ui-state-default";
 		statusList.appendChild(li);
@@ -440,18 +448,19 @@ var updateStats = function () {
 			return;
 		}
 		stats = JSON.parse(stats);
-		var statsHtml = "<table><tr class='ui-state-default'><td>Numbers Drawn:</td><td>"+stats.numbersDrawnCount+"</td></tr>"
-						+ "<tr class='ui-state-default'><td>Numbers Pending:</td><td>" + stats.numbersPendingCount+"</td></tr></table>"
-						+ "Players : <table><tr><td></td><td>Name</td><td>Number of Tickets</td></tr>";
+		var statsHtml = "<table><tr class='ui-state-default'><td>Numbers Drawn:</td><td>"+stats.numbersDrawnCount
+			+"</td></tr>" + "<tr class='ui-state-default'><td>Numbers Pending:</td><td>" 
+			+ stats.numbersPendingCount+"</td></tr></table>" 
+			+ "Players : <table><tr><td></td><td>Name</td><td>Number of Tickets</td></tr>";
 		var ticketCount = 0;
 		if (!stats.players)
 			stats.players = [];
 		for (var i = 0; i < stats.players.length; i++) {
 			statsHtml = statsHtml + "<tr class='ui-widget-content'><td>"+ (i+1)  + "</td><td>" + stats.players[i].name 
-						+ "</td><td>" + stats.players[i].ticketCount + "</td></tr>";
-			ticketCount = ticketCount + stats.players[i].ticketCount
+				+ "</td><td>" + stats.players[i].ticketCount + "</td></tr>";
+			ticketCount = ticketCount + stats.players[i].ticketCount;
 		}
-		statsHtml = statsHtml + "<tr class='ui-state-default'><td></td><td>" + stats.players.length + " Players</td><td>" + ticketCount + "</td></tr>"  
+		statsHtml = statsHtml + "<tr class='ui-state-default'><td></td><td>" + stats.players.length + " Players</td><td>" + ticketCount + "</td></tr>";  
 		statsHtml = statsHtml + "<tr class='ui-state-default'><td></td><td>Printed Tickets:</td><td>" + stats.printTicketCount+"</td></tr></table>";
 		$("#stats").html(statsHtml);
 	});
@@ -472,7 +481,7 @@ var updateLog = function () {
 		var logHtml = "<table class='log'><tr class='ui-widget-content'><td class='log'>Date</td><td class='log'>Event</td><td class='log'>Data</td></tr>";
 		for (var i = log.length-1; i > -1 ; i--) {
 			logHtml = logHtml + "<tr><td>"+ log[i].eventDate  + "</td><td>" + log[i].eventType  
-						+ "</td><td>" + log[i].eventData + "</td></tr>";
+				+ "</td><td>" + log[i].eventData + "</td></tr>";
 		}
 		logHtml = logHtml + "</table>";
 		$("#log").html(logHtml);
@@ -511,6 +520,12 @@ var toDialog = function (titleText, messageText) {
 	$("#dialog").dialog({title: titleText, width: 'auto', modal: true});
 };
 
+var showFormHelp = function (controlName) {
+	var control = document.getElementById(controlName);
+	toDialog(control.placeholder, control.title);
+};
+
+
 var updateTickets = function(num) {
 	var ticketcellid = '#ticketCell_'+num;
 	$( ticketcellid ).effect( "shake", {}, 500, function () {
@@ -518,4 +533,15 @@ var updateTickets = function(num) {
 		$( ticketcellid ).effect( "shake", {}, 500, function () {});
 	});
 	$( "#statusCell_"+num ).css({'background-color':'lime'});
+};
+
+var numberAnimate = function (container) {
+	var x = setInterval(function () {
+		var r = Math.ceil(Math.random()*200);
+		var g = Math.ceil(Math.random()*200);
+		var b = Math.ceil(Math.random()*200);
+		container.setAttribute("style", "color:rgb("+r+","+g+","+b+")");
+		container.innerText = Math.ceil(Math.random()*90);
+	}, 10);
+	return x;
 };
