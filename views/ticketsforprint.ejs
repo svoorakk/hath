@@ -1,6 +1,7 @@
 <% layout('') %>
 <% var ticketToHtml = function (ticket) {
 	if (ticket) { %>
+		<div style="font-size:7pt; margin-top:0">www.housieathome.com</div>
 		<TABLE class='ticket' width='100%'>
 		<% for (var i = 0; i < ticket[0].length; i++) {	%>
 			<TR>
@@ -24,7 +25,7 @@
   		<%= err.error %>
 	<% } %>
   <% if (tickets) { %>
-  	<table cellspacing="50">
+  	<table cellspacing="40">
 	<% for(var i=0; i<tickets.length/2; i++) {%>
 		<tr>
 		<td width="50%" align="center">
