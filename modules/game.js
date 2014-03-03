@@ -18,6 +18,8 @@ var Game = function (tag, adminPwd, playPwd, maxNo) {
     for (var i = 0; i < this.maxNo; i++) {
         this.pendingNumbers[i] = (i + 1);
     }
+    this.createDate = new Date();
+    this.lastAccessDate = new Date();
     return this;
 };
 
@@ -29,10 +31,13 @@ Game.prototype.drawNumber = function (callback) {
         this.drawnNumbers[num - 1] = num;
         this.gamePctFinished = Math.round((1 - this.pendingNumbers.length / this.maxNo) * 100);
         this.gameStarted = true;
-        if (this.pendingNumbers.length === 0)
+        if (this.pendingNumbers.length === 0) {
             this.finished = true;
+            this.finishDate = new Date();
+        }
         this.number = num;
     }
+    this.lastAccessDate = new Date();
     callback(null, this);
 };
 

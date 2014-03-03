@@ -7,9 +7,15 @@ var Datastore = require('./datastore');
 var db = new Datastore();
 var Game = require('./game');
 var Ticket = require('./ticket');
+var numberCalls = require("./numberCalls");
+var NumberCalls = new numberCalls();
+
+var logTimer;
 
 var housie = function () { 
-	
+	logTimer = setInterval(function() {
+		db.get('game', null, callback);
+	}, 20000);
 };
 
 housie.prototype.drawNumber = function(tag, adminPwd, callback) {
@@ -309,6 +315,29 @@ housie.prototype.gameList =  function (filter, New, callback) {
 	});
 };
 
+housie.prototype.checkGameList =  function (list, callback) {
+	db.get('game', null, function(err, games) {
+		if (err) {
+			callback(err);
+			return;
+		}
+		if (!games) {
+			callback([]);
+			return;
+		}
+		for (var i = list.length-1; i > -1; i--) {
+			var tag = list[i];
+			var game = games[tag];
+			if (!game || game.finished) {
+				list.splice(i, 1);
+			}
+		}
+		list.sort();
+		db.append('log', 'app', {eventType: 'Check List', eventData: list.length, eventDate: new Date()});
+		callback(null, list);
+	});
+};
+
 housie.prototype.log =  function (tag, adminPwd, callback) {
 	getGameAndValidateAccess(tag, 'Admin', adminPwd, null , function (err, game) {
 		if (err || game.error) {
@@ -349,8 +378,11 @@ function getGameAndValidateAccess(tag, accessType, inPwd, name, callback) {
 
 var getGameForPlayer = function(game) {
     var outGame = {tag:game.tag, pendingNumbers:game.pendingNumbers, drawnNumbers:game.drawnNumbers, finished:game.finished};
-    if (game.number)
+    if (game.number) {
     	outGame.number = game.number;
+    	outGame.numberCall = NumberCalls.getCall(game.number);
+    }
+    
     return outGame;
 };
 
@@ -360,6 +392,27 @@ var playerPasswordMatch = function (player, playerPassword) {
 	else
 		return false;
 };
+
+var loggerCallback = function (err, games) {
+	games = cleanGames(games, 0, function (err, games) {
+		var playerCount = 0;
+		var gameTags = Object.keys(games);
+		for (var i = 0; i < gameTags.length; i++) {
+			var game = games[gameTags[i]];
+			if (!game.finished && game.players) {
+				playerCount = playerCount + Object.keys(game.players).length;
+			}
+			//get log and last accessed date
+			
+		}
+		console.log("Monitoring status: Time: " + new Date(), ", Game count: " + gameTags.length + ", Player Count: "+ playerCount);
+	});
+};
+
+var cleanGames = function (games, iteration, callback) {
+	
+};
+
 
 module.exports = function () {
 	return new housie();

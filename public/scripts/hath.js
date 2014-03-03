@@ -31,26 +31,35 @@ var removeGame = function (game, type) {
 };
 
 //actions
-var initPage = function() {
+var initPage = function(accessType) {
+	if (!accessType) {
+		accessType = 'run';
+	}
 	if (!$.cookie("currentScreen")) 
 		$.cookie("currentScreen","home");
 	$("#home").hide();
 	$("#run").hide();
 	$("#play").hide();
 	$("#"+$.cookie("currentScreen")).show();
-	setupRunPanel();
-	setupPlayPanel();
+	if (accessType == "run") {
+		setupRunPanel();
+	}
+	if (accessType == "play") {
+		setupPlayPanel();
+	}
 	resetRunPanel();
 };
 
 var runBtnClick = function () {
-	$.cookie("currentScreen","run");
-	initPage();
+	var accessType = "run";
+	$.cookie("currentScreen",accessType);
+	initPage(accessType);
 };
 
 var playBtnClick = function () {
-	$.cookie("currentScreen","play");
-	initPage();
+	var accessType = "play";
+	$.cookie("currentScreen",accessType);
+	initPage(accessType);
 };
 
 var createGame = function() {
@@ -80,7 +89,7 @@ var createGame = function() {
 };
 
 var drawNumber = function() {
-	//$( "#numberDisplay" ).toggle( "explode" );
+	$("#callDisplay").html("&nbsp;");
 	var timer = numberAnimate(document.getElementById('numberDisplay'));
 	var tag = $.cookie("currentGame");
 	var localgame = getGames('run')[tag];
@@ -98,14 +107,14 @@ var drawNumber = function() {
 		localgame.finished = game.finished;
 		localgame.gameStarted = game.gameStarted;
 		addGame(localgame, 'run');
-		var dur = Math.ceil(Math.random()*3000);
+		var dur = Math.ceil(Math.random()*3000)+2000; //min 2 secs
 		setTimeout(function () {
 			clearInterval(timer);
 			$("#numberDisplay").html(game.number);
+			$("#callDisplay").html(game.numberCall);
 			if (game.finished)
 				toDialog("Game update", "Game completed. All numbers are drawn");			
 		}, dur);
-		//$("#numberDisplay" ).toggle( "explode" );
 	});	
 };
 
@@ -194,18 +203,20 @@ var xmlHttpPost = function (strURL, body, callback) {
 
 //screen setup
 var setupRunPanel = function() {
+	var accessType = 'run';
 	//from cookies, get any currently pending game(s)
-	var games = getGames('run');
+	var games = getGames(accessType);
 	//display them in a list
-	populateGameList(document.getElementById("runGameList"), games);
+	populateGameList(document.getElementById("runGameList"), games, accessType);
 	//display the new game panel
 };
 
 var setupPlayPanel = function() {
+	var accessType = 'play';
 	//from cookies, get any currently pending game(s)
-	var games = getGames('play');
+	var games = getGames(accessType);
 	//display them in a list
-	populateGameList(document.getElementById("playGameList"), games);
+	populateGameList(document.getElementById("playGameList"), games, accessType);
 	//display the new game panel
 };
 
@@ -231,23 +242,43 @@ var activateTab =  function (type, index) {
 	}
 };
 
-var populateGameList = function(target, games) {
+var populateGameList = function(target, games, accessType) {
 	var tags = Object.keys(games);
-	target.innerHTML = '';
-	var o=document.createElement("option");
-	o.value='';
-	if (tags.length > 0) {
-		o.text = '--Please select a game--';
+	if (!Array.isArray(tags)) {
+		tags = [tags];
 	}
-	else
-		o.text = '--None available--';
-	target.add(o, null);
-	for (var i = 0; i < tags.length; i++) {
-		o = document.createElement("option");
-		o.text=games[tags[i]].tag;
-		o.value=o.text;
+	var url = "checkgamelist";
+	var body = {};
+	body.list = tags;
+	//display wait animation
+	xmlHttpPost(url, JSON.stringify(body), function(err, list) {
+		list = JSON.parse(list);
+		listObj = {};
+		for (var i = 0; i < list.length; i++) {
+			listObj[list[i]] = list[i];
+		}
+		for (var j = tags.length-1; j > -1; j--) {
+			if (!listObj[tags[j]]) {
+				removeGame(tags[j], accessType);
+				tags.splice(j, 1);
+			}
+		}		
+		target.innerHTML = '';
+		var o=document.createElement("option");
+		o.value='';
+		if (tags.length > 0) {
+			o.text = '--Please select a game--';
+		}
+		else
+			o.text = '--None available--';
 		target.add(o, null);
-	}
+		for (var k = 0; k < tags.length; k++) {
+			o = document.createElement("option");
+			o.text=games[tags[k]].tag;
+			o.value=o.text;
+			target.add(o, null);
+		}		
+	});
 };
 
 var socket; 
@@ -536,12 +567,12 @@ var updateTickets = function(num) {
 };
 
 var numberAnimate = function (container) {
-	var x = setInterval(function () {
+	var timer = setInterval(function () {
 		var r = Math.ceil(Math.random()*200);
 		var g = Math.ceil(Math.random()*200);
 		var b = Math.ceil(Math.random()*200);
 		container.setAttribute("style", "color:rgb("+r+","+g+","+b+")");
 		container.innerText = Math.ceil(Math.random()*90);
 	}, 10);
-	return x;
+	return timer;
 };

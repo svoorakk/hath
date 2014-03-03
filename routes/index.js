@@ -139,6 +139,16 @@ exports.newGameList = function(req, res) {
 	});
 };
 
+exports.checkGameList = function(req, res) {
+	var list = req.body.list;
+	housie.checkGameList(list, function (err, list) {
+		if (err) 
+			res.send(err);
+		else
+			res.send(list);
+	});
+};
+
 exports.log = function(req, res) {
 	var tag = req.params.tag;
 	var adminPwd = req.body.adminpwd;
