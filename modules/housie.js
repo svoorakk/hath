@@ -394,9 +394,9 @@ var playerPasswordMatch = function (player, playerPassword) {
 };
 
 var loggerCallback = function (err, games) {
-	games = cleanGames(games, 0, function (err, games) {
+	var gameTags = Object.keys(games);
+	games = cleanGames(games, gameTags.length, function (err, games) {
 		var playerCount = 0;
-		var gameTags = Object.keys(games);
 		for (var i = 0; i < gameTags.length; i++) {
 			var game = games[gameTags[i]];
 			if (!game.finished && game.players) {
@@ -410,7 +410,27 @@ var loggerCallback = function (err, games) {
 };
 
 var cleanGames = function (games, iteration, callback) {
-	
+	var tag = Object.keys(games)[iteration-1];
+	db.get('log', tag, function (err, log) {
+		lastLog = log[log.length-1];
+		var deleteFlag = false;
+		if (new Date()-lastLog.eventDate > 86400000) {
+			deleteFlag = true;
+		}
+		var game = games[tag];
+		if (game.finished && (new Date() - game.finishDate) > 3600000) {
+			deleteFlag = true;
+		}
+		if (deleteFlag) {
+			db.remove('game', tag);
+			delete games[tag];
+		}
+		iteration--;
+		if (iteration > 0) {
+			cleanGames(games, iteration, callback);
+		}
+	});
+	callback(null, games);
 };
 
 
