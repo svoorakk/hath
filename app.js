@@ -52,6 +52,7 @@ app.post('/abandongame/:tag', routes.abandonGame);
 app.post('/gamestats/:tag', routes.gameStats);
 app.post('/gamelist/:filter', routes.gameList);
 app.post('/newgamelist/:filter', routes.newGameList);
+app.post('/checkgamelist', routes.checkGameList);
 app.post('/log/:tag', routes.log);
 
 app.listen(3000, function(){
