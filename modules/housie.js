@@ -14,7 +14,7 @@ var logTimer;
 
 var housie = function () { 
 	logTimer = setInterval(function() {
-		db.get('game', null, callback);
+		db.get('game', null, loggerCallback);
 	}, 20000);
 };
 
@@ -394,34 +394,43 @@ var playerPasswordMatch = function (player, playerPassword) {
 };
 
 var loggerCallback = function (err, games) {
-	var gameTags = Object.keys(games);
+	var gameTags = [];
+	if (games) {
+		gameTags = Object.keys(games);
+	}
 	games = cleanGames(games, gameTags.length, function (err, games) {
 		var playerCount = 0;
 		for (var i = 0; i < gameTags.length; i++) {
 			var game = games[gameTags[i]];
-			if (!game.finished && game.players) {
+			if (game && !game.finished && game.players) {
 				playerCount = playerCount + Object.keys(game.players).length;
 			}
-			//get log and last accessed date
-			
 		}
-		console.log("Monitoring status: Time: " + new Date(), ", Game count: " + gameTags.length + ", Player Count: "+ playerCount);
+		console.log("{Monitoring log: {Time: " + new Date(), ", Game count: " + gameTags.length + ", Player Count: "+ playerCount+"}}");
+		db.append('log', 'app', {eventType: "Monitoring", gameCount: gameTags.length, playerCount: playerCount});
 	});
 };
 
 var cleanGames = function (games, iteration, callback) {
-	var tag = Object.keys(games)[iteration-1];
+	if (iteration == 0) {
+		callback(null, games);
+		return;
+	}	var tag = Object.keys(games)[iteration-1];
 	db.get('log', tag, function (err, log) {
 		lastLog = log[log.length-1];
 		var deleteFlag = false;
+		console.log('age',(new Date() - lastLog.eventDate));
 		if (new Date()-lastLog.eventDate > 86400000) {
 			deleteFlag = true;
 		}
 		var game = games[tag];
+		console.log('finish',(new Date() - game.finishDate));
+		
 		if (game.finished && (new Date() - game.finishDate) > 3600000) {
 			deleteFlag = true;
 		}
 		if (deleteFlag) {
+			console.log('deleting ', tag);
 			db.remove('game', tag);
 			delete games[tag];
 		}
@@ -429,8 +438,10 @@ var cleanGames = function (games, iteration, callback) {
 		if (iteration > 0) {
 			cleanGames(games, iteration, callback);
 		}
+		else {
+			callback(null, games);
+		}
 	});
-	callback(null, games);
 };
 
 

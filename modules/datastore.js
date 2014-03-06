@@ -5,31 +5,38 @@ var Datastore = function () {};
 
 Datastore.prototype.get = function (collection, id, callback) {
 	var item = null;
-	if (memory[collection])
-		if (id)
+	if (memory[collection]) {
+		if (id) {
 			item = memory[collection][id];
-		else
+		}
+		else {
 			item = memory[collection];
+		}
+	}
 	callback(null, item);
 };
 
 Datastore.prototype.put = function (collection, id, item) {
-	if (!memory[collection])
+	if (!memory[collection]) {
 		memory[collection] = {};
+	}
 	memory[collection][id] = item;
 };
 
 Datastore.prototype.append = function (collection, id, item) {
-	if (!memory[collection])
+	if (!memory[collection]) {
 		memory[collection] = {};
-	if (!memory[collection][id])
+	}
+	if (!memory[collection][id]) {
 		memory[collection][id] = [];
+	}
 	memory[collection][id].push(item);
 };
 
 Datastore.prototype.remove = function (collection, id) {
-	if (memory[collection] && memory[collection][id])
+	if (memory[collection] && memory[collection][id]) {
 		delete memory[collection][id];
+	}
 };
 
 module.exports = function () {
