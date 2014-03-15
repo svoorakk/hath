@@ -18,7 +18,19 @@
 	<div id="main">
 		<h1 onclick="$.cookie('currentScreen','home');initPage();">housie@home</h1>
 		<hr />
-		<div id="menu">XXXXXXXXXXXXXX</div>
+		<div id="menu">
+			<ul>
+				<li class="menu-item" onclick="$.cookie('currentScreen','home');initPage();">Home</li>
+				<li class="menu-seperator">|</li>
+				<li class="menu-item" onclick="displayAbout()" >About</li>
+				<li class="menu-seperator">|</li>
+				<li class="menu-item" onclick="displayHelp()">Help</li>
+				<li class="menu-seperator">|</li>
+				<li class="menu-item" onclick="displayContact()">Contact</li>
+				<li class="menu-seperator">|</li>
+				<li class="menu-item" onclick="displayTerms()">Terms</li>
+			</ul>
+		</div>
 		<div id="home">
 			<h2>Welcome to housie@home !</h2>
 			<div>Here, you will find everything you need to run and play a
@@ -47,10 +59,10 @@
 						name="newAdminPwd" value="" size="10"
 						title="Admin password is needed to run the game, print game tickets and draw the numbers. Do not share it with the players.">
 						<button class="helpBtn" onclick="showFormHelp('newAdminPwd')">Help</button>
-					<br><input type="password" id="newPlayPwd" placeholder="Player password"
-						name="newPlayPwd" value="" size="10"
-						title="Player password is needed for players to join a game, get tickets and to follow the game. Once game is created, share it with the players.">
-						<button class="helpBtn" onclick="showFormHelp('newPlayPwd')">Help</button>
+					<br><input type="password" id="newGamePwd" placeholder="Game password"
+						name="newGamePwd" value="" size="10"
+						title="Game password is needed for players to join a game, get tickets and to follow the game. Once game is created, share it with the players.">
+						<button class="helpBtn" onclick="showFormHelp('newGamePwd')">Help</button>
 					<br> <input type="button" value="Create"
 						onclick="createGame();">
 				</div>
@@ -115,10 +127,10 @@
 						title="Enter your name. Make sure it is unique so that organizer and other players can easily recognize you.">
 						<button class="helpBtn" onclick="showFormHelp('joinName')">Help</button><br>
 					<input type="password" id="joinPlayerPwd"
-						name="joinPlayerPwd" value="" placeholder="Game Password" 
-						title="Player password is needed for players to join and access a game.">
+						name="joinPlayerPwd" value="" placeholder="Player Password" 
+						title="Player password is optional and can be used to protect the participation in the game.">
 						<button class="helpBtn" onclick="showFormHelp('joinPlayerPwd')">Help</button><br>
-					<input type="password" id="joinGamePwd" placeholder="Player Password"
+					<input type="password" id="joinGamePwd" placeholder="Game Password"
 						name="joinGamePwd" value=""
 						title="Game password is needed for players to join a game & get tickets. If you do not know this please contact the organizer.">
 						<button class="helpBtn" onclick="showFormHelp('joinGamePwd')">Help</button><br>

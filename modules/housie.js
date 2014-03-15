@@ -3,19 +3,21 @@
  */
 "option strict";
 
+var config = require('./configuration');
 var Datastore = require('./datastore');
 var db = new Datastore();
 var Game = require('./game');
 var Ticket = require('./ticket');
 var numberCalls = require("./numberCalls");
 var NumberCalls = new numberCalls();
+var eventTypes = config.eventTypes;
 
 var logTimer;
 
 var housie = function () { 
 	logTimer = setInterval(function() {
 		db.get('game', null, loggerCallback);
-	}, 20000);
+	}, config.monitoringInterval);
 };
 
 housie.prototype.drawNumber = function(tag, adminPwd, callback) {
@@ -29,9 +31,9 @@ housie.prototype.drawNumber = function(tag, adminPwd, callback) {
 			}
 			game.drawNumber(function(err, thisGame) {
 				db.put('game', thisGame.tag, thisGame);
-				db.append('log', thisGame.tag, {eventType: 'Draw Number', eventData: thisGame.number, eventDate: new Date()});
+				db.append('log', thisGame.tag, {eventType: eventTypes.drawNumber, eventData: thisGame.number, eventDate: new Date()});
 				if (thisGame.finished) {
-					db.append('log', thisGame.tag, {eventType: 'Finish Game', eventData: '', eventDate: new Date()});					
+					db.append('log', thisGame.tag, {eventType: eventTypes.finishGame, eventData: '', eventDate: new Date()});					
 				}
 				callback(err, getGameForPlayer(thisGame));
 			});
@@ -61,14 +63,14 @@ housie.prototype.validateJoin = function(tag, playPwd, playerPwd, playerName, ca
 		}
 		player = game.players[playerName];
 		if (player.password != playerPwd) {
-			callback({'error': 'Player password incorrect.'});
+			callback({'error': 'Player password incorrect or another player with the same name is already in the game.'});
 			return;
 		}
 		db.put('game', tag, game);
 		if (playerExists)
-			db.append('log', tag, {eventType: 'Player re-join', eventData: playerName, eventDate: new Date()});
+			db.append('log', tag, {eventType: eventTypes.playerRejoin, eventData: playerName, eventDate: new Date()});
 		else
-			db.append('log', tag, {eventType: 'Player join', eventData: playerName, eventDate: new Date()});
+			db.append('log', tag, {eventType: eventTypes.playerJoin, eventData: playerName, eventDate: new Date()});
 		callback(null,getGameForPlayer(game));
 	}); 
 };
@@ -94,10 +96,10 @@ housie.prototype.createGame = function (tag, adminPwd, playPwd, maxNo, callback)
 			if (!game) {
 				game = new Game(tag, adminPwd, playPwd, maxNo);
 				db.put('game', tag, game);
-				db.append('log', tag, {eventType: 'Create Game', eventData: "", eventDate: new Date()});
+				db.append('log', tag, {eventType: eventTypes.createGame, eventData: "", eventDate: new Date()});
 			}
 			else
-				db.append('log', tag, {eventType: 'Continue Game', eventData: "Run", eventDate: new Date()});
+				db.append('log', tag, {eventType: eventTypes.continueGame, eventData: "Run", eventDate: new Date()});
 			callback(null, getGameForPlayer(game));
 		}
 		else {
@@ -139,7 +141,7 @@ housie.prototype.issueTicket = function (tag, playPwd, name, playerPwd, maxNo, r
 					tickets = [];
 				tickets.push(ticket);
 				db.put('ticket', ticket_tag, tickets);
-				db.append('log', tag, {eventType: 'Issue Ticket', eventData: name, eventDate: new Date()});
+				db.append('log', tag, {eventType: eventTypes.issueTicket, eventData: name, eventDate: new Date()});
 				callback(null, tickets);						
 			});
 		});
@@ -163,7 +165,7 @@ housie.prototype.discardTicket = function (tag, name, playPwd, playerPwd, callba
 		}
 		var ticket_tag = tag + '_' + name + '_' + playerPwd;
 		db.put('ticket', ticket_tag, []);
-		db.append('log', tag, {eventType: 'Discard Ticket', eventData: name, eventDate: new Date()});
+		db.append('log', tag, {eventType: eventTypes.discardTicket, eventData: name, eventDate: new Date()});
 		callback(null, {message: 'Pending tickets discarded for '+ name + ' for the game ' + tag});
 	}); 
 };
@@ -195,7 +197,7 @@ housie.prototype.confirmTicket = function (tag, name, playPwd, playerPwd, callba
 			game.players[name].tickets = current_tickets;
 			db.put('game', tag, game);
 			db.put('ticket', ticket_tag, []);
-			db.append('log', tag, {eventType: 'Confirm Ticket', eventData: name, eventDate: new Date()});
+			db.append('log', tag, {eventType: eventTypes.confirmTicket, eventData: name, eventDate: new Date()});
 			callback(null, {message: 'Tickets confirmed. Total tickets count for ' + name + ' in game ' + tag + ' is ' + current_tickets.length, ticketCount: current_tickets.length});			
 		});
 	}); 
@@ -203,7 +205,7 @@ housie.prototype.confirmTicket = function (tag, name, playPwd, playerPwd, callba
 
 housie.prototype.getTickets = function (tag, name, playPwd, playerPwd, callback) {
 	getGameAndValidateAccess(tag, 'Game', playPwd, name, function(err, game) {
-		db.append('log', tag, {eventType: 'Get Tickets', eventData: name, eventDate: new Date()});
+		db.append('log', tag, {eventType: eventTypes.getTicket, eventData: name, eventDate: new Date()});
 		if (err || game.error)
 			return callback(err || game);
 		if (playerPasswordMatch(game.players[name],playerPwd))
@@ -242,7 +244,7 @@ housie.prototype.getTicketsForPrint = function (tag, adminPwd, qty, callback) {
 				game.printTickets = printTickets;
 			}
 			db.put('game', game.tag, game);
-			db.append('log', tag, {eventType: 'Tickets Print', eventData: qty, eventDate: new Date()});
+			db.append('log', tag, {eventType: eventTypes.ticketsPrint, eventData: qty, eventDate: new Date()});
 			callback(null, tickets);
 		});
 	}
@@ -252,7 +254,7 @@ housie.prototype.getTicketsForPrint = function (tag, adminPwd, qty, callback) {
 
 housie.prototype.getGame = function (tag, gamePwd, callback) {
 	db.get('game', tag, function(err, game) {
-		db.append('log', tag, {eventType: 'Get Game', eventData: "", eventDate: new Date()});
+		db.append('log', tag, {eventType: eventTypes.getGame, eventData: "", eventDate: new Date()});
 		if (err) 
 			return callback(err);
 		if (!game)
@@ -292,7 +294,7 @@ housie.prototype.gameStats = function (tag, adminPwd, callback) {
 			stats.printTicketCount = game.printTickets.length;
 		else
 			stats.printTicketCount = 0;
-		db.append('log', tag, {eventType: 'Get Stats', eventData: "", eventDate: new Date()});
+		db.append('log', tag, {eventType: eventTypes.getStats, eventData: "", eventDate: new Date()});
 		callback(err, stats);
 	}); 
 };
@@ -317,7 +319,7 @@ housie.prototype.gameList =  function (filter, New, callback) {
 			}
 		}
 		list.sort();
-		db.append('log', 'app', {eventType: 'Get List', eventData: list.length, eventDate: new Date()});
+		db.append('log', 'app', {eventType: eventTypes.getList, eventData: list.length, eventDate: new Date()});
 		callback(null, list);
 	});
 };
@@ -340,7 +342,7 @@ housie.prototype.checkGameList =  function (list, callback) {
 			}
 		}
 		list.sort();
-		db.append('log', 'app', {eventType: 'Check List', eventData: list.length, eventDate: new Date()});
+		db.append('log', 'app', {eventType: eventTypes.checkList, eventData: list.length, eventDate: new Date()});
 		callback(null, list);
 	});
 };
@@ -416,7 +418,7 @@ var loggerCallback = function (err, games) {
 			}
 		}
 		console.log("{Monitoring log: {Time: " + new Date(), ", Game count: " + gameTags.length + ", Player Count: "+ playerCount+"}}");
-		db.append('log', 'app', {eventType: "Monitoring", gameCount: gameTags.length, playerCount: playerCount});
+		db.append('log', 'app', {eventType: eventTypes.monitoring, gameCount: gameTags.length, playerCount: playerCount});
 	});
 };
 
@@ -429,13 +431,13 @@ var cleanGames = function (games, iteration, callback) {
 		lastLog = log[log.length-1];
 		var deleteFlag = false;
 		console.log('age',(new Date() - lastLog.eventDate));
-		if (new Date()-lastLog.eventDate > 86400000) {
+		if (new Date()-lastLog.eventDate > config.inactivityWait) {
 			deleteFlag = true;
 		}
 		var game = games[tag];
 		console.log('finish',(new Date() - game.finishDate));
 		
-		if (game.finished && (new Date() - game.finishDate) > 3600000) {
+		if (game.finished && (new Date() - game.finishDate) > config.finishWait) {
 			deleteFlag = true;
 		}
 		if (deleteFlag) {

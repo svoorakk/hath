@@ -4,9 +4,10 @@
 "option strict";
 
 module.exports = {
-		httpPort: 80,
+		httpPort: 3000,
 		inactivityWait: 86400000,
 		finishWait: 3600000,
+		monitoringInterval: 60000,
 		eventTypes: {
 			createGame: 'Create Game',
 			continueGame: 'Continue Game',

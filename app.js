@@ -60,7 +60,7 @@ app.post('/newgamelist/:filter', routes.newGameList);
 app.post('/checkgamelist', routes.checkGameList);
 app.post('/log/:tag', routes.log);
 
-app.listen(3000, function(){
+app.listen(config.httpPort, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 

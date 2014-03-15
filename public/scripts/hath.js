@@ -66,7 +66,19 @@ var createGame = function() {
 	//validate
 	var tag = document.getElementById("newTag").value;
 	var adPwd = document.getElementById("newAdminPwd").value;
-	var gamePwd = document.getElementById("newPlayPwd").value;
+	var gamePwd = document.getElementById("newGamePwd").value;
+	if (tag.length === 0) {
+		toDialog("Create Game Error!", "Game tag is required");
+		return;
+	}
+	if (gamePwd.length === 0) {
+		toDialog("Create Game Error!", "A player password is needed to create a game");
+		return;
+	}
+	if (adPwd.length === 0) {
+		toDialog("Create Game Error!", "An administrator password is needed to create a game.");
+		return;
+	}
 	//call server api to create game
 	var url = "/creategame/"+tag;
 	var body = {};
@@ -78,7 +90,7 @@ var createGame = function() {
 		hideWaitDialog();
 		game = JSON.parse(game);
 		if (err || game.error) {
-			toDialog("Create Game Error!", JSON.stringify(err) || game.error);
+			toDialog("Create Game Error!", (err ? JSON.stringify(err) : game.error));
 			return;
 		}
 		game.adminPwd = adPwd;
@@ -103,7 +115,7 @@ var drawNumber = function() {
 		hideWaitDialog();
 		game = JSON.parse(game);
 		if (err || game.error) {
-			toDialog("Draw Number Error!", JSON.stringify(err) || game.error);
+			toDialog("Draw Number Error!", (err ? JSON.stringify(err) : game.error));
 			return;
 		}
 		localgame.drawnNumbers = game.drawnNumbers;
@@ -133,7 +145,7 @@ var refreshGame = function (tag) {
 		response = JSON.parse(response);
 		var game = response.game;
 		if (err || game.error) {
-			toDialog("Game Update Error!", JSON.stringify(err) || game.error);
+			toDialog("Get Game Error!", (err ? JSON.stringify(err) : game.error));
 			return;
 		}
 		localgame.drawnNumbers = game.drawnNumbers;
@@ -259,6 +271,10 @@ var populateGameList = function(target, games, accessType) {
 	//display wait animation
 	xmlHttpPost(url, JSON.stringify(body), function(err, list) {
 		list = JSON.parse(list);
+		if (err || list.error) {
+			toDialog("Check Game List Error!", (err ? JSON.stringify(err) : list.error));
+			return;
+		}
 		listObj = {};
 		for (var i = 0; i < list.length; i++) {
 			listObj[list[i]] = list[i];
@@ -307,6 +323,15 @@ var joinGame = function(New) {
 		gamePwd = game.gamePwd;
 		playerPwd = game.playerPwd;
 	}
+	if (tag.length === 0) {
+		toDialog("Error", "Game tag is required");
+		return;
+	}
+	if (name.length === 0) {
+		toDialog("Error", "Player name is required");
+		return;
+	}
+	
 	var url = "validatejoin/"+tag;
 	var body = {};
 	body.playername = name;
@@ -318,7 +343,7 @@ var joinGame = function(New) {
 		hideWaitDialog();
 		game = JSON.parse(game);
 		if (err || game.error) {
-			toDialog("Join Game Error!", JSON.stringify(err) || game.error);
+			toDialog("Join Game Error!", (err ? JSON.stringify(err) : game.error));
 			return;
 		}
 		//create browser variable
@@ -330,7 +355,9 @@ var joinGame = function(New) {
 		activateTab('play', 0);
 		socket = io.connect();
 		socket.on('numberDrawn', function (game) {
-			updateTickets(game.number);
+			setTimeout(function () {
+				updateTickets(game.number);
+			}, 5000);
 		});	
 		socket.emit('joinGame', { 'tag': tag, 'gamePwd': gamePwd, playerName: name, playPwd: playerPwd });
 	});
@@ -348,8 +375,8 @@ var newTicket = function () {
 	xmlHttpPost(url, JSON.stringify(body), function(err, tickets) {
 		hideWaitDialog();
 		tickets = JSON.parse(tickets);
-		if (err || game.error) {
-			toDialog("New Ticket Error!", JSON.stringify(err) || game.error);
+		if (err || tickets.error) {
+			toDialog("Game Update Error!", (err ? JSON.stringify(err) : tickets.error));
 			return;
 		}
 		$("#newticket").show();
@@ -370,8 +397,8 @@ var confirmTicket = function () {
 	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
 		hideWaitDialog();
 		data = JSON.parse(data);
-		if (err || game.error) {
-			toDialog("Confirm Ticket Error!", JSON.stringify(err) || game.error);
+		if (err || data.error) {
+			toDialog("Confirm Ticket Error!", (err ? JSON.stringify(err) : data.error));
 			return;
 		}
 		if (data.message) {
@@ -395,8 +422,8 @@ var discardTicket = function () {
 	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
 		hideWaitDialog();
-		if (err || game.error) {
-			toDialog("Discard Ticket Error!", JSON.stringify(err) || game.error);
+		if (err || data.error) {
+			toDialog("Discard ticket Error!", (err ? JSON.stringify(err) : data.error));
 			return;
 		}
 		if (data.message) {
@@ -421,8 +448,8 @@ var getTickets = function () {
 	xmlHttpPost(url, JSON.stringify(body), function(err, tickets) {
 		hideWaitDialog();
 		tickets = JSON.parse(tickets);
-		if (err || game.error) {
-			toDialog("Get Tickets Error!", JSON.stringify(err) || game.error);
+		if (err || tickets.error) {
+			toDialog("Get Tickets Error!", (err ? JSON.stringify(err) : tickets.error));
 			return;
 		}
 		var ticketHtml = "Number of tickets : " + tickets.length + "<br><br>";
@@ -492,8 +519,8 @@ var updateStats = function () {
 	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, stats) {
 		hideWaitDialog();
-		if (err || game.error) {
-			toDialog("Game Stats Error!", JSON.stringify(err) || game.error);
+		if (err || stats.error) {
+			toDialog("Game Stats Error!", (err ? JSON.stringify(err) : stats.error));
 			return;
 		}
 		stats = JSON.parse(stats);
@@ -524,8 +551,8 @@ var updateLog = function () {
 	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, log) {
 		hideWaitDialog();
-		if (err || game.error) {
-			toDialog("Get Log Error!", JSON.stringify(err) || game.error);
+		if (err || log.error) {
+			toDialog("Get Log Error!", (err ? JSON.stringify(err) : log.error));
 			return;
 		}
 		log = JSON.parse(log);
@@ -604,4 +631,24 @@ var numberAnimate = function (container) {
 		container.innerText = Math.ceil(Math.random()*90);
 	}, 10);
 	return timer;
+};
+
+var displayTerms = function() {
+	var message = "<iframe class='menu-iframe' src='toolbar/terms.html'></iframe>";
+	toDialog("Website Terms", message);
+};
+
+var displayContact = function() {
+	var message = "<iframe class='menu-iframe' src='toolbar/contact.html'></iframe>";
+	toDialog("Contact details", message);
+};
+
+var displayHelp = function() {
+	var message = "<iframe class='menu-iframe' src='toolbar/help.html'></iframe>";
+	toDialog("Help", message);
+};
+
+var displayAbout = function() {
+	var message = "<iframe class='menu-iframe' src='toolbar/about.html'></iframe>";
+	toDialog("About", message);
 };

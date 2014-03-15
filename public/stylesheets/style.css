@@ -42,10 +42,6 @@ h2 {
     margin-right:auto;
 }
 
-#menu {
-	background-color:#04B4AE;
-}
-
 #home {
 	height:90%;
 	width:90%;
@@ -151,6 +147,38 @@ h2 {
 	text-decoration:line-through;
 }
 
+#menu {
+	background-color:#04B4AE;
+}
+
+#menu ul { 
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+	width: 100%;
+}
+
+#menu li { 
+	margin-left: 10px; 
+	margin-right: 10px; 
+	padding: 1px; 
+	font-size: 1em; 
+	font-weight:bold;
+	text-align: center;
+	max-width: 15%;
+	display:inline-block;
+}
+
+.menu-item {
+	color:#A9E2F3;
+	cursor:hand;
+	cursor:pointer
+}
+
+.menu-seperator {
+	color:#04B4EA
+}
+
 .log TABLE {
 	font-size:.6em;
 }
@@ -164,6 +192,67 @@ h2 {
 	background-image: url(images/ui-icons_0078ae_256x240.png);
 	background-position:  -48px -144px;
 }
+
+.menu-iframe-content {
+	font-size: .3em;
+	font-face: arial;
+}
+	
+/* #### Mobile Phones Portrait #### */
+@media screen and (max-device-width: 480px) and (orientation: portrait){
+	.menu-iframe {
+		width: 200px;
+		height: 350px;
+	}
+	.menu-iframe-content {
+		font-size: .3em;
+	}
+}
+
+/* #### Mobile Phones Landscape #### */
+@media screen and (max-device-width: 640px) and (orientation: landscape){
+	.menu-iframe {
+		width: 350px;
+		height: 200px;
+	}
+	.menu-iframe-content {
+		font-size: .4em;
+	}
+}
+
+/* #### Mobile Phones Portrait or Landscape #### */
+@media screen and (max-device-width: 640px){
+	.menu-iframe {
+		width: 500px;
+		height: 500px;
+	}
+	.menu-iframe-content {
+		font-size: .5em;
+	}
+}
+
+/* #### Tablets Portrait or Landscape #### */
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px){
+	.menu-iframe {
+		width: 700px;
+		height: 700px;
+	}
+	.menu-iframe-content {
+		font-size: .7em;
+	}
+}
+
+/* #### Desktops #### */
+@media screen and (min-width: 1024px){
+	.menu-iframe {
+		width: 700px;
+		height: 700px;
+	}
+	.menu-iframe-content {
+		font-size: 1em;
+	}
+}
+
 
 @media only screen and (min-width: 1000px) {
 	#main {width:1000px}
