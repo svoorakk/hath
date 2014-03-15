@@ -1,3 +1,4 @@
+"option strict";
 
 var memory = {};
 

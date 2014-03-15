@@ -2,6 +2,11 @@
 /**
  * Module dependencies.
  */
+"option strict";
+
+var config = require('./modules/configuration');
+var Notify = require('./modules/notify');
+var notify = new Notify();
 
 var express = require('express')
  , routes = require('./routes')
@@ -60,6 +65,9 @@ app.listen(3000, function(){
 });
 
 process.on('uncaughtException', function (err) {
-	console.log('error','Caught exception: ' + err);
-	console.log('error',err.stack);
+	console.log('Uncaught exception: ', err);
+});
+
+process.on('exit', function () {
+	notify.sendEmail('housieathome break','Housie at home app process exited.');
 });

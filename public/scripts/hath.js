@@ -72,8 +72,10 @@ var createGame = function() {
 	var body = {};
 	body.adminpwd = adPwd;
 	body.playerpwd = gamePwd;
+	showWaitDialog();
 	//display wait animation
 	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
+		hideWaitDialog();
 		game = JSON.parse(game);
 		if (err || game.error) {
 			toDialog("Create Game Error!", JSON.stringify(err) || game.error);
@@ -96,7 +98,9 @@ var drawNumber = function() {
 	var url = "drawnumber/"+tag;
 	var body = {};
 	body.adminpwd = localgame.adminPwd;
+	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
+		hideWaitDialog();
 		game = JSON.parse(game);
 		if (err || game.error) {
 			toDialog("Draw Number Error!", JSON.stringify(err) || game.error);
@@ -123,7 +127,9 @@ var refreshGame = function (tag) {
 	var url = "getgame/"+tag;
 	var body = {};
 	body.gamepwd = localgame.gamePwd;
+	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, response) {
+		hideWaitDialog();
 		response = JSON.parse(response);
 		var game = response.game;
 		if (err || game.error) {
@@ -307,7 +313,9 @@ var joinGame = function(New) {
 	body.gamepwd = gamePwd;	
 	body.playerpwd = playerPwd;	
 	//display wait animation
+	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
+		hideWaitDialog();
 		game = JSON.parse(game);
 		if (err || game.error) {
 			toDialog("Join Game Error!", JSON.stringify(err) || game.error);
@@ -336,7 +344,9 @@ var newTicket = function () {
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
 	body.gamepwd = game.gamePwd;
+	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, tickets) {
+		hideWaitDialog();
 		tickets = JSON.parse(tickets);
 		if (err || game.error) {
 			toDialog("New Ticket Error!", JSON.stringify(err) || game.error);
@@ -356,7 +366,9 @@ var confirmTicket = function () {
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
 	body.gamepwd = game.gamePwd;
+	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
+		hideWaitDialog();
 		data = JSON.parse(data);
 		if (err || game.error) {
 			toDialog("Confirm Ticket Error!", JSON.stringify(err) || game.error);
@@ -380,7 +392,9 @@ var discardTicket = function () {
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
 	body.gamepwd = game.gamePwd;
+	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
+		hideWaitDialog();
 		if (err || game.error) {
 			toDialog("Discard Ticket Error!", JSON.stringify(err) || game.error);
 			return;
@@ -403,7 +417,9 @@ var getTickets = function () {
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
 	body.gamepwd = game.gamePwd;
+	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, tickets) {
+		hideWaitDialog();
 		tickets = JSON.parse(tickets);
 		if (err || game.error) {
 			toDialog("Get Tickets Error!", JSON.stringify(err) || game.error);
@@ -473,7 +489,9 @@ var updateStats = function () {
 	var url = "gamestats/"+tag;
 	var body = {};
 	body.adminpwd = game.adminPwd;
+	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, stats) {
+		hideWaitDialog();
 		if (err || game.error) {
 			toDialog("Game Stats Error!", JSON.stringify(err) || game.error);
 			return;
@@ -503,7 +521,9 @@ var updateLog = function () {
 	var url = "log/"+tag;
 	var body = {};
 	body.adminpwd = game.adminPwd;
+	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, log) {
+		hideWaitDialog();
 		if (err || game.error) {
 			toDialog("Get Log Error!", JSON.stringify(err) || game.error);
 			return;
@@ -556,6 +576,15 @@ var showFormHelp = function (controlName) {
 	toDialog(control.placeholder, control.title);
 };
 
+var showWaitDialog = function() {
+	hdrText = "Wait ...";
+	msgText = "<img src='images/ajax-loader.gif'>";
+	toDialog(hdrText, msgText);
+};
+
+var hideWaitDialog = function () {
+	$( "#dialog" ).dialog( "close" );
+};
 
 var updateTickets = function(num) {
 	var ticketcellid = '#ticketCell_'+num;

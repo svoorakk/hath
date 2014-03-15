@@ -1,6 +1,8 @@
 /**
  * New node file
  */
+"option strict";
+
 module.exports = {
 		httpPort: 80,
 		inactivityWait: 86400000,
@@ -21,5 +23,14 @@ module.exports = {
 			playerRejoin: 'Player re-join',
 			playerJoin: 'Player join',
 			ticketsPrint: 'Tickets Print'
+		},
+		email: {
+			host: 'smtp.mail.yahoo.com',
+			ssl: true,
+			user: 'fromhousieathome',
+			password: 'Vs190677',
+			from: 'fromhousieathome@yahoo.com',
+			to: 'housieathome@yahoo.co.uk',
+			sendEmail: true
 		}
 };

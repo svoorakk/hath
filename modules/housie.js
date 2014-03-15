@@ -23,9 +23,16 @@ housie.prototype.drawNumber = function(tag, adminPwd, callback) {
 		if (err || game.error)
 			return callback(err||game);
 		else {
+			if (game.finished) {
+				callback(null, getGameForPlayer(game));
+				return;
+			}
 			game.drawNumber(function(err, thisGame) {
 				db.put('game', thisGame.tag, thisGame);
 				db.append('log', thisGame.tag, {eventType: 'Draw Number', eventData: thisGame.number, eventDate: new Date()});
+				if (thisGame.finished) {
+					db.append('log', thisGame.tag, {eventType: 'Finish Game', eventData: '', eventDate: new Date()});					
+				}
 				callback(err, getGameForPlayer(thisGame));
 			});
 		}	
@@ -377,12 +384,14 @@ function getGameAndValidateAccess(tag, accessType, inPwd, name, callback) {
 }
 
 var getGameForPlayer = function(game) {
-    var outGame = {tag:game.tag, pendingNumbers:game.pendingNumbers, drawnNumbers:game.drawnNumbers, finished:game.finished};
+    var outGame = {tag:game.tag, pendingNumbers:game.pendingNumbers, drawnNumbers:game.drawnNumbers};
     if (game.number) {
     	outGame.number = game.number;
     	outGame.numberCall = NumberCalls.getCall(game.number);
     }
-    
+    if (game.finished) {
+    	outGame.finished = game.finished;
+    }    
     return outGame;
 };
 
@@ -412,7 +421,7 @@ var loggerCallback = function (err, games) {
 };
 
 var cleanGames = function (games, iteration, callback) {
-	if (iteration == 0) {
+	if (iteration === 0) {
 		callback(null, games);
 		return;
 	}	var tag = Object.keys(games)[iteration-1];
