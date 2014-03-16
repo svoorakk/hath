@@ -198,6 +198,11 @@ h2 {
 	font-face: arial;
 	text-align:left
 }
+
+#ticketsDisplay {
+	min-height: 300px; 
+	overflow: scroll;
+}
 	
 /* #### Mobile Phones Portrait #### */
 @media screen and (max-device-width: 480px) and (orientation: portrait){

@@ -104,15 +104,14 @@ var createGame = function() {
 
 var drawNumber = function() {
 	$("#callDisplay").html("&nbsp;");
+	$("#btnDrawNbr").prop("disabled",true);
 	var timer = numberAnimate(document.getElementById('numberDisplay'));
 	var tag = $.cookie("currentGame");
 	var localgame = getGames('run')[tag];
 	var url = "drawnumber/"+tag;
 	var body = {};
 	body.adminpwd = localgame.adminPwd;
-	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
-		hideWaitDialog();
 		game = JSON.parse(game);
 		if (err || game.error) {
 			toDialog("Draw Number Error!", (err ? JSON.stringify(err) : game.error));
@@ -128,6 +127,7 @@ var drawNumber = function() {
 			clearInterval(timer);
 			$("#numberDisplay").html(game.number);
 			$("#callDisplay").html(game.numberCall);
+			$("#btnDrawNbr").prop("disabled",false);
 			if (game.finished)
 				toDialog("Game update", "Game completed. All numbers are drawn");			
 		}, dur);
@@ -614,10 +614,10 @@ var hideWaitDialog = function () {
 };
 
 var updateTickets = function(num) {
-	var ticketcellid = '#ticketCell_'+num;
-	$( ticketcellid ).effect( "shake", {}, 500, function () {
-		$( ticketcellid ).css({'text-decoration':'line-through','color':'crimson', 'background-color':'lime'});
-		$( ticketcellid ).effect( "shake", {}, 500, function () {});
+	var selector = "span[id=ticketCell_"+num+"]";
+	$( selector ).effect( "shake", {}, 500, function () {
+		$( selector ).css({'text-decoration':'line-through','color':'crimson', 'background-color':'lime'});
+		$( selector ).effect( "shake", {}, 500, function () {});
 	});
 	$( "#statusCell_"+num ).css({'background-color':'lime'});
 };
