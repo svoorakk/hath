@@ -194,8 +194,9 @@ h2 {
 }
 
 .menu-iframe-content {
-	font-size: .3em;
+	font-size: .8em;
 	font-face: arial;
+	text-align:left
 }
 	
 /* #### Mobile Phones Portrait #### */
@@ -205,7 +206,7 @@ h2 {
 		height: 350px;
 	}
 	.menu-iframe-content {
-		font-size: .3em;
+		font-size: .8em;
 	}
 }
 
@@ -216,7 +217,7 @@ h2 {
 		height: 200px;
 	}
 	.menu-iframe-content {
-		font-size: .4em;
+		font-size: .8em;
 	}
 }
 
@@ -227,7 +228,7 @@ h2 {
 		height: 500px;
 	}
 	.menu-iframe-content {
-		font-size: .5em;
+		font-size: .9em;
 	}
 }
 
@@ -238,7 +239,7 @@ h2 {
 		height: 700px;
 	}
 	.menu-iframe-content {
-		font-size: .7em;
+		font-size: .9em;
 	}
 }
 
