@@ -47,7 +47,7 @@ var initPage = function(accessType) {
 	if (accessType == "play") {
 		setupPlayPanel();
 	}
-	resetRunPanel();
+	//resetRunPanel();
 };
 
 var runBtnClick = function () {
@@ -135,7 +135,11 @@ var drawNumber = function() {
 };
 
 var refreshGame = function (tag) {
-	var localgame = getGames('run')[tag]||getGames('play')[tag];
+	var type = $.cookie("currentScreen");
+	if (type == "home") {
+		return;
+	}
+	var localgame = getGames(type)[tag];
 	var url = "getgame/"+tag;
 	var body = {};
 	body.gamepwd = localgame.gamePwd;
@@ -152,12 +156,8 @@ var refreshGame = function (tag) {
 		localgame.pendingNumbers = game.pendingNumbers;
 		localgame.finished = game.finished;
 		localgame.gameStarted = game.gameStarted;
-		if (getGames('run')[tag])
-			addGame(localgame, 'run');
-		if (getGames('play')[tag])
-			addGame(localgame, 'play');
-		updateStatus('play', localgame);
-		updateStatus('run',localgame);
+		addGame(localgame, type);
+		updateStatus(type, localgame);
 	});	
 };
 
