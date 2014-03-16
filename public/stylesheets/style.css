@@ -4,7 +4,7 @@ html {
 	text-align:center;
 }
 body {
-	height:100%;
+	min-height:100%;
 	font-family: verdana;
 	font-size:.8em;
 }
@@ -27,14 +27,14 @@ h2 {
 	text-align:center; 
 	margin-bottom:2%;
 }
+
 #main {
     position:absolute;
     top:0;
     bottom:0;
     left:0;
     right:0;
-    overflow:scroll;
-    height:100%;
+    min-height:100%;
   	background-color:#A9E2F3;
 	vertical-align: middle;
 	max-width:1000px;
@@ -49,9 +49,7 @@ h2 {
 	margin-left:auto;
 	margin-bottom:5%;
 	margin-right:5%;
-	padding:5px;
 	border-collapse:separate;
-	border-spacing:20px;
 }
 
 .mainBtn {
@@ -75,15 +73,20 @@ h2 {
 	padding:5%;
 }
 
+.mainBtnHdr {
+	font-weight:bold;
+	font-size:1.2em;
+}
+
 .panel1 {
     border: .5em solid #00FFFF;
     background-color: #00FFFF;
 	border-radius: 10px;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;	
-	width:90%;
+	width:95%;
 	margin:auto;
-	min-height:25%;
+	min-height:75%;
 }
 
 .panel2 {
@@ -93,23 +96,25 @@ h2 {
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;	
 	margin:auto;
-	min-height:25%;
+	min-height:35%;
+	overflow:auto;
 }
 
 .ticket {
 	background-color: #00AAAA;
-	font-size:1.5em;
+	font-size:1em;
 }
 
 .ticketcell {
     border: .1em solid #000000;
 	padding:.1em;
+	min-width:10%;
 }
 
 #draw {
 	text-align:center;
 	width:100%;
-	height:95%;
+	min-height:95%;
 }
 
 #numberDisplay {
@@ -159,8 +164,6 @@ h2 {
 }
 
 #menu li { 
-	margin-left: 10px; 
-	margin-right: 10px; 
 	padding: 1px; 
 	font-size: 1em; 
 	font-weight:bold;
@@ -172,11 +175,17 @@ h2 {
 .menu-item {
 	color:#A9E2F3;
 	cursor:hand;
-	cursor:pointer
+	cursor:pointer;
+	margin-left: 1px; 
+	margin-right: 1px; 
+}
+
+.menu-item:hover {
+	color:#FFFFFF;
 }
 
 .menu-seperator {
-	color:#04B4EA
+	color:#44BBEE;
 }
 
 .log TABLE {
@@ -195,70 +204,18 @@ h2 {
 
 .menu-iframe-content {
 	font-size: .8em;
-	font-face: arial;
 	text-align:left
+}
+.menu-iframe {
+		width: 200px;
+		height: 350px;
 }
 
 #ticketsDisplay {
 	min-height: 300px; 
-	overflow: scroll;
+	overflow: stretch;
 }
 	
-/* #### Mobile Phones Portrait #### */
-@media screen and (max-device-width: 480px) and (orientation: portrait){
-	.menu-iframe {
-		width: 200px;
-		height: 350px;
-	}
-	.menu-iframe-content {
-		font-size: .8em;
-	}
-}
-
-/* #### Mobile Phones Landscape #### */
-@media screen and (max-device-width: 640px) and (orientation: landscape){
-	.menu-iframe {
-		width: 350px;
-		height: 200px;
-	}
-	.menu-iframe-content {
-		font-size: .8em;
-	}
-}
-
-/* #### Mobile Phones Portrait or Landscape #### */
-@media screen and (max-device-width: 640px){
-	.menu-iframe {
-		width: 500px;
-		height: 500px;
-	}
-	.menu-iframe-content {
-		font-size: .9em;
-	}
-}
-
-/* #### Tablets Portrait or Landscape #### */
-@media screen and (min-device-width: 768px) and (max-device-width: 1024px){
-	.menu-iframe {
-		width: 700px;
-		height: 700px;
-	}
-	.menu-iframe-content {
-		font-size: .9em;
-	}
-}
-
-/* #### Desktops #### */
-@media screen and (min-width: 1024px){
-	.menu-iframe {
-		width: 700px;
-		height: 700px;
-	}
-	.menu-iframe-content {
-		font-size: 1em;
-	}
-}
-
 
 @media only screen and (min-width: 1000px) {
 	#main {width:1000px}

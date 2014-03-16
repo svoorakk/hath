@@ -18,7 +18,7 @@ module.exports = {
 			getGame: 'Get game',
 			getList: 'Get list',
 			getStats: 'Get stats',
-			getTickets: 'Get tickets',
+			getTicket: 'Get ticket',
 			issueTicket: 'Issue ticket',
 			monitoring: "Monitoring",
 			playerRejoin: 'Player re-join',
