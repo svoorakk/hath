@@ -32,11 +32,11 @@ var removeGame = function (game, type) {
 
 //actions
 var initPage = function(accessType) {
-	if (!accessType) {
-		accessType = 'run';
-	}
 	if (!$.cookie("currentScreen")) 
 		$.cookie("currentScreen","home");
+	if (!accessType) {
+		accessType = $.cookie("currentScreen");
+	}
 	$("#home").hide();
 	$("#run").hide();
 	$("#play").hide();
