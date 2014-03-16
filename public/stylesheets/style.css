@@ -215,7 +215,7 @@ h2 {
 	min-height: 300px; 
 	overflow: stretch;
 }
-	
+
 
 @media only screen and (min-width: 1000px) {
 	#main {width:1000px}
