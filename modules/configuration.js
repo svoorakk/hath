@@ -31,7 +31,7 @@ module.exports = {
 			user: 'fromhousieathome',
 			password: 'Vs190677',
 			from: 'fromhousieathome@yahoo.com',
-			to: 'housieathome@yahoo.co.uk',
+			to: 'housieathome@yahoo.com',
 			sendEmail: true
 		}
 };

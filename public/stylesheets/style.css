@@ -203,12 +203,12 @@ h2 {
 }
 
 .menu-iframe-content {
-	font-size: .8em;
+	font-size: 1em;
 	text-align:left
 }
 .menu-iframe {
-		width: 200px;
-		height: 350px;
+		width: 250px;
+		height: 250px;
 }
 
 #ticketsDisplay {
@@ -216,7 +216,34 @@ h2 {
 	overflow: stretch;
 }
 
+@media only screen and (min-width: 300px and max-width:480px) {
+	.menu-iframe-content {
+		font-size: 1.2em;
+	}
+	.menu-iframe {
+		width: 280px;
+		height: 280px;
+	}
+}
 
-@media only screen and (min-width: 1000px) {
-	#main {width:1000px}
+@media only screen and (min-width: 481px and max-width:768px) {
+	.menu-iframe {
+		width: 400px;
+		height: 300px;
+	}
+}
+
+@media only screen and (min-width: 769px and max-width:960px) {
+	.menu-iframe {
+		width: 650px;
+		height: 400px;
+	}
+}
+
+@media only screen and (min-width: 961px) {
+	#main {width:960px}
+	.menu-iframe {
+		width: 800px;
+		height: 550px;
+	}
 }
