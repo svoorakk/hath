@@ -15,8 +15,6 @@ var express = require('express')
 var app = module.exports = express.createServer()
  ,  io = require('socket.io').listen(app);
 
-
-
 // Configuration
 
 app.configure(function(){
@@ -28,6 +26,7 @@ app.configure(function(){
   app.use(express.static(__dirname + '/public'));
   app.use(app.router);
 });
+
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
@@ -43,31 +42,31 @@ socketServer = new ss(io);
 routes.init(socketServer);
 
 app.get('/', routes.index);
-app.post('/creategame/:tag', routes.createGame);
-app.post('/drawnumber/:tag', routes.drawNumber);
-app.post('/validatejoin/:tag', routes.validateJoin);
-app.post('/issueticket/:tag', routes.issueTicket);
-app.post('/confirmticket/:tag', routes.confirmTicket);
-app.post('/gettickets/:tag', routes.getTickets);
-app.post('/discardticket/:tag', routes.discardTicket);
+app.post('/creategame/:gameTag', routes.createGame);
+app.post('/drawnumber/:gameTag', routes.drawNumber);
+app.post('/validatejoin/:gameTag', routes.validateJoin);
+app.post('/issueticket/:gameTag', routes.issueTicket);
+app.post('/confirmticket/:gameTag', routes.confirmTicket);
+app.post('/gettickets/:gameTag', routes.getTickets);
+app.post('/discardticket/:gameTag', routes.discardTicket);
 app.post('/getticketsforprint', routes.getTicketsForPrint);
-app.post('/getticketsforprint/:tag', routes.getTicketsForPrint);
-app.post('/getgame/:tag', routes.getGame);
-app.post('/abandongame/:tag', routes.abandonGame);
-app.post('/gamestats/:tag', routes.gameStats);
+app.post('/getticketsforprint/:gameTag', routes.getTicketsForPrint);
+app.post('/getgame/:gameTag', routes.getGame);
+app.post('/abandongame/:gameTag', routes.abandonGame);
+app.post('/gamestats/:gameTag', routes.gameStats);
 app.post('/gamelist/:filter', routes.gameList);
 app.post('/newgamelist/:filter', routes.newGameList);
 app.post('/checkgamelist', routes.checkGameList);
-app.post('/log/:tag', routes.log);
+app.post('/log/:gameTag', routes.log);
 
 app.listen(config.httpPort, function(){
   console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
-
+/*
 process.on('uncaughtException', function (err) {
 	console.log('Uncaught exception: ', err);
 });
-
+*/
 process.on('exit', function () {
 	notify.sendEmail('housieathome break','Housie at home app process exited.');
 });

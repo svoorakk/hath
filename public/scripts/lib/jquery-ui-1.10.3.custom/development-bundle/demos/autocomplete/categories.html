@@ -1,25 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>jQuery UI Autocomplete - Categories</title>
-	<link rel="stylesheet" href="../../themes/base/jquery.ui.all.css">
-	<script src="../../jquery-1.9.1.js"></script>
-	<script src="../../ui/jquery.ui.core.js"></script>
-	<script src="../../ui/jquery.ui.widget.js"></script>
-	<script src="../../ui/jquery.ui.position.js"></script>
-	<script src="../../ui/jquery.ui.menu.js"></script>
-	<script src="../../ui/jquery.ui.autocomplete.js"></script>
-	<link rel="stylesheet" href="../demos.css">
-	<style>
-	.ui-autocomplete-category {
-		font-weight: bold;
-		padding: .2em .4em;
-		margin: .8em 0 .2em;
-		line-height: 1.5;
-	}
-	</style>
-	<script>
+<meta charset="utf-8">
+<title>jQuery UI Autocomplete - Categories</title>
+<link rel="stylesheet" href="../../themes/base/jquery.ui.all.css">
+<script src="../../jquery-1.9.1.js"></script>
+<script src="../../ui/jquery.ui.core.js"></script>
+<script src="../../ui/jquery.ui.widget.js"></script>
+<script src="../../ui/jquery.ui.position.js"></script>
+<script src="../../ui/jquery.ui.menu.js"></script>
+<script src="../../ui/jquery.ui.autocomplete.js"></script>
+<link rel="stylesheet" href="../demos.css">
+<style>
+.ui-autocomplete-category {
+	font-weight: bold;
+	padding: .2em .4em;
+	margin: .8em 0 .2em;
+	line-height: 1.5;
+}
+</style>
+<script>
 	$.widget( "custom.catcomplete", $.ui.autocomplete, {
 		_renderMenu: function( ul, items ) {
 			var that = this,
@@ -34,7 +34,7 @@
 		}
 	});
 	</script>
-	<script>
+<script>
 	$(function() {
 		var data = [
 			{ label: "anders", category: "" },
@@ -57,11 +57,11 @@
 </head>
 <body>
 
-<label for="search">Search: </label>
-<input id="search">
+	<label for="search">Search: </label>
+	<input id="search">
 
-<div class="demo-description">
-<p>A categorized search result. Try typing "a" or "n".</p>
-</div>
+	<div class="demo-description">
+		<p>A categorized search result. Try typing "a" or "n".</p>
+	</div>
 </body>
 </html>

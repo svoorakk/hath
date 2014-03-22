@@ -1,25 +1,25 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>jQuery UI Button - Toolbar</title>
-	<link rel="stylesheet" href="../../themes/base/jquery.ui.all.css">
-	<script src="../../jquery-1.9.1.js"></script>
-	<script src="../../ui/jquery.ui.core.js"></script>
-	<script src="../../ui/jquery.ui.widget.js"></script>
-	<script src="../../ui/jquery.ui.button.js"></script>
-	<link rel="stylesheet" href="../demos.css">
-	<style>
-	#toolbar {
-		padding: 4px;
-		display: inline-block;
-	}
-	/* support: IE7 */
-	*+html #toolbar {
-		display: inline;
-	}
-	</style>
-	<script>
+<meta charset="utf-8">
+<title>jQuery UI Button - Toolbar</title>
+<link rel="stylesheet" href="../../themes/base/jquery.ui.all.css">
+<script src="../../jquery-1.9.1.js"></script>
+<script src="../../ui/jquery.ui.core.js"></script>
+<script src="../../ui/jquery.ui.widget.js"></script>
+<script src="../../ui/jquery.ui.button.js"></script>
+<link rel="stylesheet" href="../demos.css">
+<style>
+#toolbar {
+	padding: 4px;
+	display: inline-block;
+}
+/* support: IE7 */
+*+html #toolbar {
+	display: inline;
+}
+</style>
+<script>
 	$(function() {
 		$( "#beginning" ).button({
 			text: false,
@@ -91,28 +91,28 @@
 </head>
 <body>
 
-<div id="toolbar" class="ui-widget-header ui-corner-all">
-	<button id="beginning">go to beginning</button>
-	<button id="rewind">rewind</button>
-	<button id="play">play</button>
-	<button id="stop">stop</button>
-	<button id="forward">fast forward</button>
-	<button id="end">go to end</button>
+	<div id="toolbar" class="ui-widget-header ui-corner-all">
+		<button id="beginning">go to beginning</button>
+		<button id="rewind">rewind</button>
+		<button id="play">play</button>
+		<button id="stop">stop</button>
+		<button id="forward">fast forward</button>
+		<button id="end">go to end</button>
 
-	<input type="checkbox" id="shuffle" /><label for="shuffle">Shuffle</label>
+		<input type="checkbox" id="shuffle" /><label for="shuffle">Shuffle</label>
 
-	<span id="repeat">
-		<input type="radio" id="repeat0" name="repeat" checked="checked" /><label for="repeat0">No Repeat</label>
-		<input type="radio" id="repeat1" name="repeat" /><label for="repeat1">Once</label>
-		<input type="radio" id="repeatall" name="repeat" /><label for="repeatall">All</label>
-	</span>
-</div>
+		<span id="repeat"> <input type="radio" id="repeat0"
+			name="repeat" checked="checked" /><label for="repeat0">No
+				Repeat</label> <input type="radio" id="repeat1" name="repeat" /><label
+			for="repeat1">Once</label> <input type="radio" id="repeatall"
+			name="repeat" /><label for="repeatall">All</label>
+		</span>
+	</div>
 
-<div class="demo-description">
-<p>
-	A mediaplayer toolbar. Take a look at the underlying markup: A few button elements,
-	an input of type checkbox for the Shuffle button, and three inputs of type radio for the Repeat options.
-</p>
-</div>
+	<div class="demo-description">
+		<p>A mediaplayer toolbar. Take a look at the underlying markup: A
+			few button elements, an input of type checkbox for the Shuffle
+			button, and three inputs of type radio for the Repeat options.</p>
+	</div>
 </body>
 </html>

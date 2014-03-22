@@ -127,13 +127,13 @@ var generateTicket = function (maxNo, rows, cols, numberCount, callback) {
 		//to reduce the risk of hanging
 		if (arrColCount.length < (cols * 0.4)) {
 			if (sArr.length < rowsLeft && sArr.length < maxLeft) {
-				console.log('Leaving at 1');
+				//console.log('Leaving at 1');
 				continue;
 			}
 		}
 		
 		if (maxLeft > rowsLeft) {
-			console.log('Abandoning at 1');
+			//console.log('Abandoning at 1');
 			callback({'error':{'message':'Error placing the numbers'}});
 			return;
 		}
@@ -145,8 +145,8 @@ var generateTicket = function (maxNo, rows, cols, numberCount, callback) {
 		var rowIdx = getRandomWholeNo(range)-1;
 		var row = availRows[rowIdx];
 		if (row == null) {
-			console.log('range', range, 'rowIdx', rowIdx, 'sArr', sArr, 'tArr', tArr, 'arrRowCount', arrRowCount);
-			console.log('maxLeft', maxLeft, 'rowsLeft', rowsLeft, 'arrColCount', arrColCount);
+			//console.log('range', range, 'rowIdx', rowIdx, 'sArr', sArr, 'tArr', tArr, 'arrRowCount', arrRowCount);
+			//console.log('maxLeft', maxLeft, 'rowsLeft', rowsLeft, 'arrColCount', arrColCount);
 			//fix the column
 			var fixed = false;
 			for (var i = 0; i < rows; i++)
@@ -166,7 +166,7 @@ var generateTicket = function (maxNo, rows, cols, numberCount, callback) {
 					//Redundant check - can be removed
 					iCountLocal++;
 					if (iCountLocal > maxNo) {
-						console.log('Abandoning at 4');
+						//console.log('Abandoning at 4');
 						callback({'error':{'message':'Error placing the numbers'}});	
 						return;
 					}
@@ -191,14 +191,14 @@ var generateTicket = function (maxNo, rows, cols, numberCount, callback) {
 						}
 					}
 				}
-				console.log('Last fix tried');
+				//console.log('Last fix tried');
 				continue;				
 			}
 		}
 		else {
 			if (arrRowCount[row]+1 == numsPerRow && rowsLeft == maxLeft)
 				if (sArr.length != maxLeft) {
-					console.log('Continue 3');
+					//console.log('Continue 3');
 					continue;
 				}
 			tArr[row] = sArr[0];
@@ -230,7 +230,7 @@ var ticket = function (maxNo, rows, cols, numberCount, callback) {
 	var generationCounter = 0;
 	generateTicket(maxNo, rows, cols, numberCount, function(err, result) {
 		generationCounter++;
-		console.log('generationCounter',generationCounter);
+		//console.log('generationCounter',generationCounter);
 		if (err || !validTicket(result, rows, numberCount)) {
 			console.log('Error', err);
 			ticket(maxNo, rows, cols, numberCount, callback);
@@ -254,10 +254,10 @@ var validTicket = function (ticket, rows, numberCount) {
 				counter++;
 		}
 		if (counter != validCount) {
-			console.log("Invalid Ticket : ", ticket);
-			console.log("Row : ", i+1);
-			console.log("Counter : ", counter);
-			console.log("Valid Count : ", validCount);
+			//console.log("Invalid Ticket : ", ticket);
+			//console.log("Row : ", i+1);
+			//console.log("Counter : ", counter);
+			//console.log("Valid Count : ", validCount);
 			return false;
 		}
 	}

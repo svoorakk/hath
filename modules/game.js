@@ -3,12 +3,12 @@
  */
 "option strict";
 
-var Game = function (tag, adminPwd, playPwd, maxNo) {
+var Game = function (gameTag, adminPwd, playPwd, maxNo) {
 
     this.maxNo = maxNo;
     this.adminPwd = adminPwd;
     this.playPwd = playPwd;
-    this.tag = tag;
+    this.gameTag = gameTag;
     this.maxNo = maxNo||90;
     this.finished = false;
     this.gameStarted = false;
@@ -21,24 +21,6 @@ var Game = function (tag, adminPwd, playPwd, maxNo) {
     this.createDate = new Date();
     this.lastAccessDate = new Date();
     return this;
-};
-
-Game.prototype.drawNumber = function (callback) {
-    //Draw number from remaining numbers
-    if (!this.finished) {
-        var idx = Math.floor(Math.random() * this.pendingNumbers.length);
-        var num = this.pendingNumbers.splice(idx, 1)[0];
-        this.drawnNumbers[num - 1] = num;
-        this.gamePctFinished = Math.round((1 - this.pendingNumbers.length / this.maxNo) * 100);
-        this.gameStarted = true;
-        if (this.pendingNumbers.length === 0) {
-            this.finished = true;
-            this.finishDate = new Date();
-        }
-        this.number = num;
-    }
-    this.lastAccessDate = new Date();
-    callback(null, this);
 };
 
 module.exports = Game;

@@ -17,13 +17,14 @@
 </head>
 <body onload="initPage();">
 	<div id="main">
-		<h1 onclick="$.cookie('currentScreen','home');initPage();">housie@home</h1>
+		<h1 onclick="$.cookie('currentScreen','home');initPage();">housie@home<span style="font-size:small;font-family:arial">&nbsp;&nbsp;&nbsp;beta</span></h1>
 		<hr />
 		<div id="menu">
 			<ul>
-				<li class="menu-item" onclick="$.cookie('currentScreen','home');initPage();">Home</li>
+				<li class="menu-item"
+					onclick="$.cookie('currentScreen','home');initPage();">Home</li>
 				<li class="menu-seperator">|</li>
-				<li class="menu-item" onclick="displayAbout()" >About</li>
+				<li class="menu-item" onclick="displayAbout()">About</li>
 				<li class="menu-seperator">|</li>
 				<li class="menu-item" onclick="displayHelp()">Help</li>
 				<li class="menu-seperator">|</li>
@@ -38,11 +39,17 @@
 				game of Housie/Tambola/Bingo.</div>
 			<br>
 			<div class="mainBtn" onclick="runBtnClick();">
-				<div><span class="mainBtnHdr">Run a Game</span><br>Press here to Organize a game</div>
+				<div>
+					<span class="mainBtnHdr">Run a Game</span><br>Press here to
+					Organize a game
+				</div>
 			</div>
 			<div>&nbsp;</div>
 			<div class="mainBtn" onclick="playBtnClick();">
-				<div><span class="mainBtnHdr">Play a Game</span><br>To play, press here</div>
+				<div>
+					<span class="mainBtnHdr">Play a Game</span><br>To play, press
+					here
+				</div>
 			</div>
 		</div>
 		<div id="run" class="panel1">
@@ -50,18 +57,23 @@
 			<div id="runAccordion">
 				<h3>Create a new game</h3>
 				<div id="runNew" class="panel2">
+					<span class="noplaceholder">Game Tag</span>
 					<input type="text" id="newTag" name="newTag" placeholder="Game Tag"
 						value="" size="15"
 						title="Enter a name for the game, which you can easily recall. If you forget this you cannot retrieve the game again.">
-						<button class="helpBtn" onclick="showFormHelp('newTag')">Help</button>
-					<br><input type="password" id="newAdminPwd"  placeholder="Admin password"
-						name="newAdminPwd" value="" size="15"
+					<button class="helpBtn" onclick="showFormHelp('newTag')">Help</button>
+					<br>
+					<span class="noplaceholder">Admin password</span>
+					<input type="password" id="newAdminPwd"
+						placeholder="Admin password" name="newAdminPwd" value="" size="15"
 						title="Admin password is needed to run the game, print game tickets and draw the numbers. Do not share it with the players.">
-						<button class="helpBtn" onclick="showFormHelp('newAdminPwd')">Help</button>
-					<br><input type="password" id="newGamePwd" placeholder="Game password"
+					<button class="helpBtn" onclick="showFormHelp('newAdminPwd')">Help</button>
+					<br>
+					<span class="noplaceholder">Game password</span>
+					<input type="password" id="newGamePwd" placeholder="Game password"
 						name="newGamePwd" value="" size="15"
 						title="Game password is needed for players to join a game, get tickets and to follow the game. Once game is created, share it with the players.">
-						<button class="helpBtn" onclick="showFormHelp('newGamePwd')">Help</button>
+					<button class="helpBtn" onclick="showFormHelp('newGamePwd')">Help</button>
 					<br> <input type="button" value="Create"
 						onclick="createGame();">
 				</div>
@@ -75,16 +87,20 @@
 			</div>
 			<div id="runTabs">
 				<ul>
-					<li><a href="#tickets">Print<br>Tickets</a></li>
-					<li><a href="#draw">Draw<br>Numbers</a></li>
-					<li><a href="#runStatus">View<br>Status</a></li>
-					<li><a href="#stats">Game<br>Stats</a></li>
+					<li><a href="#tickets">Print<br>Tickets
+					</a></li>
+					<li><a href="#draw">Draw<br>Numbers
+					</a></li>
+					<li><a href="#runStatus">View<br>Status
+					</a></li>
+					<li><a href="#stats">Game<br>Stats
+					</a></li>
 					<!-- <li><a href="#log">Game<br>Log</a></li> -->
 				</ul>
 				<div id="tickets">
 					Players who are online can join the game and get tickets using the
-					'Play' option from home page. For players who are not
-					online you have an option to print tickets.
+					'Play' option from home page. For players who are not online you
+					have an option to print tickets.
 					<p>
 						Select number of tickets to print : <SELECT id="selTicketCount">
 							<OPTION VALUE=""></OPTION>
@@ -117,24 +133,31 @@
 			<div id="playAccordion">
 				<h3>Join a game</h3>
 				<div id="playNew" class="panel2">
-					<input type="text" placeholder="Game Tag" 
-						id="joinTag" name="joinTag" value="" size="15"
+					<span class="noplaceholder">Game Tag</span>
+					<input type="text" placeholder="Game Tag" id="joinTag"
+						name="joinTag" value="" size="15"
 						title="Enter the tag for the Game you want to join. If you don't know this you, talk to the organizer of the Game.">
-						<button class="helpBtn" onclick="showFormHelp('joinTag')">Help</button><br>
-					<input type="text" id="joinName" name="joinName"
-						value="" placeholder="Player Name" size="15"
+					<button class="helpBtn" onclick="showFormHelp('joinTag')">Help</button>
+					<span class="noplaceholder">Player Name</span>
+					<br> <input type="text" id="joinName" name="joinName" value=""
+						placeholder="Player Name" size="15"
 						title="Enter your name. Make sure it is unique so that organizer and other players can easily recognize you.">
-						<button class="helpBtn" onclick="showFormHelp('joinName')">Help</button><br>
+					<button class="helpBtn" onclick="showFormHelp('joinName')">Help</button>
+					<br> 
+					<span class="noplaceholder">Player password</span>
 					<input type="password" id="joinPlayerPwd"
-						name="joinPlayerPwd" value="" placeholder="Player Password" size="15"
+						name="joinPlayerPwd" value="" placeholder="Player Password"
+						size="15"
 						title="Player password is optional and can be used to protect the participation in the game.">
-						<button class="helpBtn" onclick="showFormHelp('joinPlayerPwd')">Help</button><br>
-					<input type="password" id="joinGamePwd" placeholder="Game Password"
-						name="joinGamePwd" value="" size="15"
+					<button class="helpBtn" onclick="showFormHelp('joinPlayerPwd')">Help</button>
+					<br> 
+					<span class="noplaceholder">Game password</span>					
+					<input type="password" id="joinGamePwd"
+						placeholder="Game Password" name="joinGamePwd" value="" size="15"
 						title="Game password is needed for players to join a game & get tickets. If you do not know this please contact the organizer.">
-						<button class="helpBtn" onclick="showFormHelp('joinGamePwd')">Help</button><br>
-					<input type="button" value="Join" onclick="joinGame(true);">
-					<br>
+					<button class="helpBtn" onclick="showFormHelp('joinGamePwd')">Help</button>
+					<br> <input type="button" value="Join"
+						onclick="joinGame(true);"> <br>
 				</div>
 				<h3>Continue a game</h3>
 				<div id="playCurrent" class="panel2">
@@ -145,9 +168,12 @@
 			</div>
 			<div id="playTabs">
 				<ul>
-					<li><a href="#buy">Get<br>Tickets</a></li>
-					<li><a href="#ticketsDisplay">View<br>Tickets</a></li>
-					<li><a href="#playStatus">Play<br>Status</a></li>
+					<li><a href="#buy">Get<br>Tickets
+					</a></li>
+					<li><a href="#ticketsDisplay">View<br>Tickets
+					</a></li>
+					<li><a href="#playStatus">Play<br>Status
+					</a></li>
 				</ul>
 				<div id="buy">
 					<div id="ticketCount">Tickets you already have for this game
@@ -162,9 +188,7 @@
 							id="btnDiscardTicket">
 					</div>
 				</div>
-				<div id="ticketsDisplay">
-
-				</div>
+				<div id="ticketsDisplay"></div>
 				<div id="playStatus">
 					Status of the Game :
 					<ul id="playStatuslist" class="statuslist">

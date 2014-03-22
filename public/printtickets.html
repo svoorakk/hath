@@ -1,29 +1,31 @@
 <html>
 <head>
-<link  rel="stylesheet" type="text/css"  href="stylesheets/style.css">
-<link  rel="stylesheet" type="text/css"  href="scripts/lib/jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css">
+<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+<link rel="stylesheet" type="text/css"
+	href="scripts/lib/jquery-ui-1.10.3.custom/css/start/jquery-ui-1.10.3.custom.min.css">
 <script type="text/javascript" src="scripts/lib/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="scripts/lib/jquery.cookie-1.3.1.js"></script>
-<script type="text/javascript" src="scripts/lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script type="text/javascript"
+	src="scripts/lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script>
 var submitForm = function () {
-	var tag = $.cookie("currentGame");
+	var gameTag = $.cookie("currentGame");
 	var cookieName = "runGames";
 	var games = $.cookie(cookieName);
 	if (games)
 		games = JSON.parse(games);
 	else
 		games = {};
-	game = games[tag];
+	game = games[gameTag];
 	frm = document.forms[0];
 	qty = getParameterByName("qty");
 	if (qty==="")
 		qty = "10";
 	if (game) {
-		frm.tag.value = tag;
+		frm.gameTag.value = gameTag;
 		frm.adminpwd.value = game.adminPwd;
 		frm.qty.value = qty
-		frm.action = "getticketsforprint/"+tag
+		frm.action = "getticketsforprint/"+gameTag
 		frm.submit();
 	}
 }
@@ -37,10 +39,10 @@ function getParameterByName(field) {
 </script>
 </head>
 <body onload="submitForm()">
-<form id="frmTickets" method="POST">
-<input type="hidden" name="tag" id="tag">
-<input type="hidden" name="adminpwd" id="adminpwd">
-<input type="hidden" name="qty" id="qty">
-</form>
+	<form id="frmTickets" method="POST">
+		<input type="hidden" name="gameTag" id="gameTag"> <input type="hidden"
+			name="adminpwd" id="adminpwd"> <input type="hidden"
+			name="qty" id="qty">
+	</form>
 </body>
 </html>

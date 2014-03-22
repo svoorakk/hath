@@ -19,15 +19,20 @@ var setGames = function (games, type) {
 var addGame = function (game, type) {
 	//get current games
 	var games = getGames(type);
-	games[game.tag] = game;
+	games[game.gameTag] = game;
 	setGames(games, type);
 };
 
 var removeGame = function (game, type) {
 	//get current games
 	var games = getGames(type);
-	delete games[game.tag];
+	delete games[game.gameTag];
 	setGames(games, type);
+};
+
+var supports_input_placeholder = function () {
+	  var i = document.createElement('input');
+	  return 'placeholder' in i;
 };
 
 //actions
@@ -64,10 +69,10 @@ var playBtnClick = function () {
 
 var createGame = function() {
 	//validate
-	var tag = document.getElementById("newTag").value;
+	var gameTag = document.getElementById("newTag").value;
 	var adPwd = document.getElementById("newAdminPwd").value;
 	var gamePwd = document.getElementById("newGamePwd").value;
-	if (tag.length === 0) {
+	if (gameTag.length === 0) {
 		toDialog("Create Game Error!", "Game tag is required");
 		return;
 	}
@@ -80,7 +85,7 @@ var createGame = function() {
 		return;
 	}
 	//call server api to create game
-	var url = "/creategame/"+tag;
+	var url = "/creategame/"+gameTag;
 	var body = {};
 	body.adminpwd = adPwd;
 	body.playerpwd = gamePwd;
@@ -106,9 +111,9 @@ var drawNumber = function() {
 	$("#callDisplay").html("&nbsp;");
 	$("#btnDrawNbr").prop("disabled",true);
 	var timer = numberAnimate(document.getElementById('numberDisplay'));
-	var tag = $.cookie("currentGame");
-	var localgame = getGames('run')[tag];
-	var url = "drawnumber/"+tag;
+	var gameTag = $.cookie("currentGame");
+	var localgame = getGames('run')[gameTag];
+	var url = "drawnumber/"+gameTag;
 	var body = {};
 	body.adminpwd = localgame.adminPwd;
 	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
@@ -134,13 +139,13 @@ var drawNumber = function() {
 	});	
 };
 
-var refreshGame = function (tag) {
+var refreshGame = function (gameTag) {
 	var type = $.cookie("currentScreen");
 	if (type == "home") {
 		return;
 	}
-	var localgame = getGames(type)[tag];
-	var url = "getgame/"+tag;
+	var localgame = getGames(type)[gameTag];
+	var url = "getgame/"+gameTag;
 	var body = {};
 	body.gamepwd = localgame.gamePwd;
 	showWaitDialog();
@@ -163,7 +168,7 @@ var refreshGame = function (tag) {
 
 
 var setupRunTabs = function(game) {
-	$.cookie("currentGame", game.tag);
+	$.cookie("currentGame", game.gameTag);
 	//display next screen
 	$("#runAccordion").hide();
 	$("#runTabs").show();
@@ -171,15 +176,15 @@ var setupRunTabs = function(game) {
 };
 
 var setupPlayTabs = function(game) {
-	$.cookie("currentGame", game.tag);
+	$.cookie("currentGame", game.gameTag);
 	//display next screen
 	$("#playAccordion").hide();
 	$("#playTabs").show();
 	//update status panel
 };
 
-var continueRunGame = function(tag) {
-	var game = getGames('run')[tag];
+var continueRunGame = function(gameTag) {
+	var game = getGames('run')[gameTag];
 	setupRunTabs(game);
 };
 
@@ -227,6 +232,9 @@ var setupRunPanel = function() {
 	//display them in a list
 	populateGameList(document.getElementById("runGameList"), games, accessType);
 	//display the new game panel
+	if (supports_input_placeholder()) {
+		$( ".noplaceholder" ).hide();
+	}
 };
 
 var setupPlayPanel = function() {
@@ -236,6 +244,9 @@ var setupPlayPanel = function() {
 	//display them in a list
 	populateGameList(document.getElementById("playGameList"), games, accessType);
 	//display the new game panel
+	if (supports_input_placeholder()) {
+		$( ".noplaceholder" ).hide();
+	}
 };
 
 var activateTab =  function (type, index) {
@@ -261,13 +272,13 @@ var activateTab =  function (type, index) {
 };
 
 var populateGameList = function(target, games, accessType) {
-	var tags = Object.keys(games);
-	if (!Array.isArray(tags)) {
-		tags = [tags];
+	var gameTags = Object.keys(games);
+	if (!Array.isArray(gameTags)) {
+		gameTags = [gameTags];
 	}
 	var url = "checkgamelist";
 	var body = {};
-	body.list = tags;
+	body.list = gameTags;
 	//display wait animation
 	xmlHttpPost(url, JSON.stringify(body), function(err, list) {
 		list = JSON.parse(list);
@@ -279,24 +290,24 @@ var populateGameList = function(target, games, accessType) {
 		for (var i = 0; i < list.length; i++) {
 			listObj[list[i]] = list[i];
 		}
-		for (var j = tags.length-1; j > -1; j--) {
-			if (!listObj[tags[j]]) {
-				removeGame(tags[j], accessType);
-				tags.splice(j, 1);
+		for (var j = gameTags.length-1; j > -1; j--) {
+			if (!listObj[gameTags[j]]) {
+				removeGame(gameTags[j], accessType);
+				gameTags.splice(j, 1);
 			}
 		}		
 		target.innerHTML = '';
 		var o=document.createElement("option");
 		o.value='';
-		if (tags.length > 0) {
+		if (gameTags.length > 0) {
 			o.text = '--Please select a game--';
 		}
 		else
 			o.text = '--None available--';
 		target.add(o, null);
-		for (var k = 0; k < tags.length; k++) {
+		for (var k = 0; k < gameTags.length; k++) {
 			o = document.createElement("option");
-			o.text=games[tags[k]].tag;
+			o.text=games[gameTags[k]].gameTag;
 			o.value=o.text;
 			target.add(o, null);
 		}		
@@ -306,24 +317,24 @@ var populateGameList = function(target, games, accessType) {
 var socket; 
 
 var joinGame = function(New) {
-	var tag; 
+	var gameTag; 
 	var name;
 	var gamePwd;
 	var playerPwd;
 	if (New) {
-		tag = document.getElementById("joinTag").value;
+		gameTag = document.getElementById("joinTag").value;
 		name = document.getElementById("joinName").value;
 		gamePwd = document.getElementById("joinGamePwd").value;
 		playerPwd = document.getElementById("joinPlayerPwd").value;
 	}
 	else {
-		tag = document.getElementById("playGameList").value;
-		var game = getGames('play')[tag];
+		gameTag = document.getElementById("playGameList").value;
+		var game = getGames('play')[gameTag];
 		name = game.playerName;
 		gamePwd = game.gamePwd;
 		playerPwd = game.playerPwd;
 	}
-	if (tag.length === 0) {
+	if (gameTag.length === 0) {
 		toDialog("Error", "Game tag is required");
 		return;
 	}
@@ -332,7 +343,7 @@ var joinGame = function(New) {
 		return;
 	}
 	
-	var url = "validatejoin/"+tag;
+	var url = "validatejoin/"+gameTag;
 	var body = {};
 	body.playername = name;
 	body.gamepwd = gamePwd;	
@@ -359,14 +370,14 @@ var joinGame = function(New) {
 				updateTickets(game.number);
 			}, 5000);
 		});	
-		socket.emit('joinGame', { 'tag': tag, 'gamePwd': gamePwd, playerName: name, playPwd: playerPwd });
+		socket.emit('joinGame', { 'gameTag': gameTag, 'gamePwd': gamePwd, playerName: name, playPwd: playerPwd });
 	});
 };
 
 var newTicket = function () {
-	var tag = $.cookie("currentGame");
-	var game = getGames('play')[tag];
-	var url = "issueticket/"+tag;
+	var gameTag = $.cookie("currentGame");
+	var game = getGames('play')[gameTag];
+	var url = "issueticket/"+gameTag;
 	var body = {};
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
@@ -386,9 +397,9 @@ var newTicket = function () {
 };
 
 var confirmTicket = function () {
-	var tag = $.cookie("currentGame");
-	var game = getGames('play')[tag];
-	var url = "confirmticket/"+tag;
+	var gameTag = $.cookie("currentGame");
+	var game = getGames('play')[gameTag];
+	var url = "confirmticket/"+gameTag;
 	var body = {};
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
@@ -412,9 +423,9 @@ var confirmTicket = function () {
 };
 
 var discardTicket = function () {
-	var tag = $.cookie("currentGame");
-	var game = getGames('play')[tag];
-	var url = "discardticket/"+tag;
+	var gameTag = $.cookie("currentGame");
+	var game = getGames('play')[gameTag];
+	var url = "discardticket/"+gameTag;
 	var body = {};
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
@@ -422,6 +433,7 @@ var discardTicket = function () {
 	showWaitDialog();
 	xmlHttpPost(url, JSON.stringify(body), function(err, data) {
 		hideWaitDialog();
+		data = JSON.parse(data);
 		if (err || data.error) {
 			toDialog("Discard ticket Error!", (err ? JSON.stringify(err) : data.error));
 			return;
@@ -436,10 +448,10 @@ var discardTicket = function () {
 };
 
 var getTickets = function () {
-	var tag = $.cookie("currentGame");
-	refreshGame(tag);
-	var game = getGames('play')[tag];
-	var url = "gettickets/"+tag;
+	var gameTag = $.cookie("currentGame");
+	refreshGame(gameTag);
+	var game = getGames('play')[gameTag];
+	var url = "gettickets/"+gameTag;
 	var body = {};
 	body.name = game.playerName;
 	body.playerpwd = game.playerPwd;
@@ -457,7 +469,7 @@ var getTickets = function () {
 		$("#btnGetTicket").show();
 		$("#newTicketDisplay").html("");
 		$("#newticket").hide();
-		game = getGames('play')[tag];
+		game = getGames('play')[gameTag];
 		var drawn = {};
 		game.drawnNumbers.forEach(function (elem, idx, arr) {
 			if (elem) {
@@ -473,8 +485,8 @@ var getTickets = function () {
 
 var updateStatus = function (type, game) {
 	if (!game) {
-		var tag = $.cookie("currentGame");
-		game = getGames(type)[tag];
+		var gameTag = $.cookie("currentGame");
+		game = getGames(type)[gameTag];
 	}
 	var max = 0;
 	var pending = {};
@@ -511,9 +523,9 @@ var updateStatus = function (type, game) {
 };
 
 var updateStats = function () {
-	var tag = $.cookie("currentGame");
-	game = getGames('run')[tag];
-	var url = "gamestats/"+tag;
+	var gameTag = $.cookie("currentGame");
+	game = getGames('run')[gameTag];
+	var url = "gamestats/"+gameTag;
 	var body = {};
 	body.adminpwd = game.adminPwd;
 	showWaitDialog();
@@ -543,9 +555,9 @@ var updateStats = function () {
 };
 
 var updateLog = function () {
-	var tag = $.cookie("currentGame");
-	game = getGames('run')[tag];
-	var url = "log/"+tag;
+	var gameTag = $.cookie("currentGame");
+	game = getGames('run')[gameTag];
+	var url = "log/"+gameTag;
 	var body = {};
 	body.adminpwd = game.adminPwd;
 	showWaitDialog();

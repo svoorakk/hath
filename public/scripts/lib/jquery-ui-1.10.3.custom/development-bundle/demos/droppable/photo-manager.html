@@ -1,34 +1,77 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<title>jQuery UI Droppable - Simple photo manager</title>
-	<link rel="stylesheet" href="../../themes/base/jquery.ui.all.css">
-	<script src="../../jquery-1.9.1.js"></script>
-	<script src="../../ui/jquery.ui.position.js"></script>
-	<script src="../../ui/jquery.ui.core.js"></script>
-	<script src="../../ui/jquery.ui.widget.js"></script>
-	<script src="../../ui/jquery.ui.mouse.js"></script>
-	<script src="../../ui/jquery.ui.draggable.js"></script>
-	<script src="../../ui/jquery.ui.droppable.js"></script>
-	<script src="../../ui/jquery.ui.resizable.js"></script>
-	<script src="../../ui/jquery.ui.dialog.js"></script>
-	<link rel="stylesheet" href="../demos.css">
-	<style>
-	#gallery { float: left; width: 65%; min-height: 12em; }
-	.gallery.custom-state-active { background: #eee; }
-	.gallery li { float: left; width: 96px; padding: 0.4em; margin: 0 0.4em 0.4em 0; text-align: center; }
-	.gallery li h5 { margin: 0 0 0.4em; cursor: move; }
-	.gallery li a { float: right; }
-	.gallery li a.ui-icon-zoomin { float: left; }
-	.gallery li img { width: 100%; cursor: move; }
+<meta charset="utf-8">
+<title>jQuery UI Droppable - Simple photo manager</title>
+<link rel="stylesheet" href="../../themes/base/jquery.ui.all.css">
+<script src="../../jquery-1.9.1.js"></script>
+<script src="../../ui/jquery.ui.position.js"></script>
+<script src="../../ui/jquery.ui.core.js"></script>
+<script src="../../ui/jquery.ui.widget.js"></script>
+<script src="../../ui/jquery.ui.mouse.js"></script>
+<script src="../../ui/jquery.ui.draggable.js"></script>
+<script src="../../ui/jquery.ui.droppable.js"></script>
+<script src="../../ui/jquery.ui.resizable.js"></script>
+<script src="../../ui/jquery.ui.dialog.js"></script>
+<link rel="stylesheet" href="../demos.css">
+<style>
+#gallery {
+	float: left;
+	width: 65%;
+	min-height: 12em;
+}
 
-	#trash { float: right; width: 32%; min-height: 18em; padding: 1%; }
-	#trash h4 { line-height: 16px; margin: 0 0 0.4em; }
-	#trash h4 .ui-icon { float: left; }
-	#trash .gallery h5 { display: none; }
-	</style>
-	<script>
+.gallery.custom-state-active {
+	background: #eee;
+}
+
+.gallery li {
+	float: left;
+	width: 96px;
+	padding: 0.4em;
+	margin: 0 0.4em 0.4em 0;
+	text-align: center;
+}
+
+.gallery li h5 {
+	margin: 0 0 0.4em;
+	cursor: move;
+}
+
+.gallery li a {
+	float: right;
+}
+
+.gallery li a.ui-icon-zoomin {
+	float: left;
+}
+
+.gallery li img {
+	width: 100%;
+	cursor: move;
+}
+
+#trash {
+	float: right;
+	width: 32%;
+	min-height: 18em;
+	padding: 1%;
+}
+
+#trash h4 {
+	line-height: 16px;
+	margin: 0 0 0.4em;
+}
+
+#trash h4 .ui-icon {
+	float: left;
+}
+
+#trash .gallery h5 {
+	display: none;
+}
+</style>
+<script>
 	$(function() {
 		// there's the gallery and the trash
 		var $gallery = $( "#gallery" ),
@@ -138,45 +181,63 @@
 </head>
 <body>
 
-<div class="ui-widget ui-helper-clearfix">
+	<div class="ui-widget ui-helper-clearfix">
 
-<ul id="gallery" class="gallery ui-helper-reset ui-helper-clearfix">
-	<li class="ui-widget-content ui-corner-tr">
-		<h5 class="ui-widget-header">High Tatras</h5>
-		<img src="images/high_tatras_min.jpg" alt="The peaks of High Tatras" width="96" height="72" />
-		<a href="images/high_tatras.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
-		<a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
-	</li>
-	<li class="ui-widget-content ui-corner-tr">
-		<h5 class="ui-widget-header">High Tatras 2</h5>
-		<img src="images/high_tatras2_min.jpg" alt="The chalet at the Green mountain lake" width="96" height="72" />
-		<a href="images/high_tatras2.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
-		<a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
-	</li>
-	<li class="ui-widget-content ui-corner-tr">
-		<h5 class="ui-widget-header">High Tatras 3</h5>
-		<img src="images/high_tatras3_min.jpg" alt="Planning the ascent" width="96" height="72" />
-		<a href="images/high_tatras3.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
-		<a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
-	</li>
-	<li class="ui-widget-content ui-corner-tr">
-		<h5 class="ui-widget-header">High Tatras 4</h5>
-		<img src="images/high_tatras4_min.jpg" alt="On top of Kozi kopka" width="96" height="72" />
-		<a href="images/high_tatras4.jpg" title="View larger image" class="ui-icon ui-icon-zoomin">View larger</a>
-		<a href="link/to/trash/script/when/we/have/js/off" title="Delete this image" class="ui-icon ui-icon-trash">Delete image</a>
-	</li>
-</ul>
+		<ul id="gallery" class="gallery ui-helper-reset ui-helper-clearfix">
+			<li class="ui-widget-content ui-corner-tr">
+				<h5 class="ui-widget-header">High Tatras</h5> <img
+				src="images/high_tatras_min.jpg" alt="The peaks of High Tatras"
+				width="96" height="72" /> <a href="images/high_tatras.jpg"
+				title="View larger image" class="ui-icon ui-icon-zoomin">View
+					larger</a> <a href="link/to/trash/script/when/we/have/js/off"
+				title="Delete this image" class="ui-icon ui-icon-trash">Delete
+					image</a>
+			</li>
+			<li class="ui-widget-content ui-corner-tr">
+				<h5 class="ui-widget-header">High Tatras 2</h5> <img
+				src="images/high_tatras2_min.jpg"
+				alt="The chalet at the Green mountain lake" width="96" height="72" />
+				<a href="images/high_tatras2.jpg" title="View larger image"
+				class="ui-icon ui-icon-zoomin">View larger</a> <a
+				href="link/to/trash/script/when/we/have/js/off"
+				title="Delete this image" class="ui-icon ui-icon-trash">Delete
+					image</a>
+			</li>
+			<li class="ui-widget-content ui-corner-tr">
+				<h5 class="ui-widget-header">High Tatras 3</h5> <img
+				src="images/high_tatras3_min.jpg" alt="Planning the ascent"
+				width="96" height="72" /> <a href="images/high_tatras3.jpg"
+				title="View larger image" class="ui-icon ui-icon-zoomin">View
+					larger</a> <a href="link/to/trash/script/when/we/have/js/off"
+				title="Delete this image" class="ui-icon ui-icon-trash">Delete
+					image</a>
+			</li>
+			<li class="ui-widget-content ui-corner-tr">
+				<h5 class="ui-widget-header">High Tatras 4</h5> <img
+				src="images/high_tatras4_min.jpg" alt="On top of Kozi kopka"
+				width="96" height="72" /> <a href="images/high_tatras4.jpg"
+				title="View larger image" class="ui-icon ui-icon-zoomin">View
+					larger</a> <a href="link/to/trash/script/when/we/have/js/off"
+				title="Delete this image" class="ui-icon ui-icon-trash">Delete
+					image</a>
+			</li>
+		</ul>
 
-<div id="trash" class="ui-widget-content ui-state-default">
-	<h4 class="ui-widget-header"><span class="ui-icon ui-icon-trash">Trash</span> Trash</h4>
-</div>
+		<div id="trash" class="ui-widget-content ui-state-default">
+			<h4 class="ui-widget-header">
+				<span class="ui-icon ui-icon-trash">Trash</span> Trash
+			</h4>
+		</div>
 
-</div>
+	</div>
 
-<div class="demo-description">
-<p>You can delete an image either by dragging it to the Trash or by clicking the trash icon.</p>
-<p>You can "recycle" an image by dragging it back to the gallery or by clicking the recycle icon.</p>
-<p>You can view larger image by clicking the zoom icon. jQuery UI dialog widget is used for the modal window.</p>
-</div>
+	<div class="demo-description">
+		<p>You can delete an image either by dragging it to the Trash or
+			by clicking the trash icon.</p>
+		<p>You can "recycle" an image by dragging it back to the gallery
+			or by clicking the recycle icon.</p>
+		<p>You can view larger image by clicking the zoom icon. jQuery UI
+			dialog widget is used for the modal window.</p>
+	</div>
 </body>
 </html>
