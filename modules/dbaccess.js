@@ -42,7 +42,8 @@ module.exports = {
 	},
 	remove: function (collection, id) {
 		var idName = collection+'Tag';
-		var query = JSON.parse("{"+idName+":'"+id+"'}");
+		var query = {};
+		query[idName]=id;
 		db[collection].remove(query, function (err, result) {
 
 		});
