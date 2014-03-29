@@ -9,25 +9,32 @@
 	src="scripts/lib/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script>
 var submitForm = function () {
-	var gameTag = $.cookie("currentGame");
-	var cookieName = "runGames";
-	var games = $.cookie(cookieName);
-	if (games)
-		games = JSON.parse(games);
-	else
-		games = {};
-	game = games[gameTag];
-	frm = document.forms[0];
+	offline = getParameterByName("offline");
 	qty = getParameterByName("qty");
-	if (qty==="")
-		qty = "10";
-	if (game) {
-		frm.gameTag.value = gameTag;
-		frm.adminpwd.value = game.adminPwd;
-		frm.qty.value = qty
-		frm.action = "getticketsforprint/"+gameTag
-		frm.submit();
+	frm = document.forms[0];
+	if (offline) {
+		frm.action = "getticketsforprint";
 	}
+	else {
+		var gameTag = $.cookie("currentGame");
+		var cookieName = "runGames";
+		var games = $.cookie(cookieName);
+		if (games)
+			games = JSON.parse(games);
+		else
+			games = {};
+		game = games[gameTag];
+		if (game) {
+			frm.gameTag.value = gameTag;
+			frm.adminpwd.value = game.adminPwd;
+		}
+		frm.action = "getticketsforprint/"+gameTag
+	}
+	if (qty==="") {
+		qty = "10";
+	}
+	frm.qty.value = qty
+	frm.submit();
 }
 
 function getParameterByName(field) {

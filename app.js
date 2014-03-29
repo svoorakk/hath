@@ -19,11 +19,12 @@ var app = module.exports = express.createServer()
 
 app.configure(function(){
   app.use(express.logger());
+  app.use(express.compress());
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
   app.use(express.bodyParser());
   app.use(express.methodOverride());
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static(__dirname + '/public', {maxAge: 86400000}));
   app.use(app.router);
 });
 

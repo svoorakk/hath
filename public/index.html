@@ -51,6 +51,18 @@
 					here
 				</div>
 			</div>
+			<div>&nbsp;</div>
+			<div>
+			To just print tickets, select the number of tickets : <SELECT id="selTicketCountOffline">
+							<OPTION VALUE=""></OPTION>
+							<OPTION VALUE="10">10</OPTION>
+							<OPTION VALUE="20">20</OPTION>
+							<OPTION VALUE="30">30</OPTION>
+							<OPTION VALUE="40">40</OPTION>
+							<OPTION VALUE="50">50</OPTION>
+						</SELECT> and 
+			<a href="Javascript:getTicketsForPrint(document.getElementById('selTicketCountOffline').value, true);">click here</a>
+			</div>
 		</div>
 		<div id="run" class="panel1">
 			<h2>Run a Game</h2>
@@ -109,7 +121,7 @@
 							<OPTION VALUE="30">30</OPTION>
 							<OPTION VALUE="40">40</OPTION>
 							<OPTION VALUE="50">50</OPTION>
-						</SELECT> <a href="Javascript:getTicketsForPrint();">Click here get
+						</SELECT> <a href="Javascript:getTicketsForPrint(document.getElementById('selTicketCount').value);">Click here to get
 							tickets </a>
 					</p>
 				</div>

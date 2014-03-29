@@ -578,11 +578,14 @@ var updateLog = function () {
 	});
 };
 
-var getTicketsForPrint = function () {
-	var qty = document.getElementById("selTicketCount").value;
+var getTicketsForPrint = function (qty, offline) {
 	if (qty === "")
 		qty = "10";
-	window.open("printtickets.html?qty="+qty);
+	var ticketUrl = "printtickets.html?qty="+qty;
+	if (offline) {
+		ticketUrl = ticketUrl + "&offline=true";
+	}
+	window.open(ticketUrl);
 };
 
 var ticketToHtml = function (ticket, drawn) {

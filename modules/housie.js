@@ -238,7 +238,6 @@ housie.prototype.getTickets = function (gameTag, name, playPwd, playerPwd, callb
 housie.prototype.getTicketsForPrint = function (gameTag, adminPwd, qty, callback) {
 	if (gameTag && gameTag.length > 0) {
 		getGameAndValidateAccess(gameTag, 'Admin', adminPwd, null, function(err, game) {
-			var tickets = [];
 			if (err || game.error) {
 				callback(err || game);
 				return;
@@ -247,30 +246,28 @@ housie.prototype.getTicketsForPrint = function (gameTag, adminPwd, qty, callback
 				callback ({error:'Game already commenced. Tickets cannot be confirmed after the commencement of the game'});
 				return;
 			}
-			var cb = function (err, result) {
-				tickets.push(result);
+			var cb = function (err, tickets) {
+				if (err) {
+					callback(err);
+					return;
+				}
+				if (game) {
+					var printTickets = game.printTickets;
+					if (!printTickets)
+						printTickets = [];
+					printTickets = printTickets.concat(tickets);
+					game.printTickets = printTickets;
+					db.put('game', game.gameTag, game);
+					db.append('log', {logTag: gameTag, eventType: eventTypes.ticketsPrint, eventData: qty, eventDate: new Date()});
+				}
+				callback(null, tickets);
 			};
-			for (var i = 0; i < qty; i++) {
-				Ticket(null,null,null,null, cb);
-			}
-			while (tickets.length !=qty) {
-				//console.log('XXXXXXXXXXXX');
-			}
-			if (game) {
-				var printTickets = game.printTickets;
-				if (!printTickets)
-					printTickets = [];
-				printTickets = printTickets.concat(tickets);
-				game.printTickets = printTickets;
-				console.log(game.printTickets);
-			}
-			db.put('game', game.gameTag, game);
-			db.append('log', {logTag: gameTag, eventType: eventTypes.ticketsPrint, eventData: qty, eventDate: new Date()});
-			callback(null, tickets);
+			ticketsForPrint(qty, cb);
 		});
 	}
-	else
-		callback({error:'Invalid game tag'});
+	else {
+		ticketsForPrint(qty, callback);
+	}
 };
 
 housie.prototype.getGame = function (gameTag, gamePwd, callback) {
@@ -502,7 +499,19 @@ var drawNumber = function (game, callback) {
     callback(null, game);
 };
 
-
+var ticketsForPrint = function (count, callback) {
+	var tickets = [];
+	var cb = function (err, result) {
+		tickets.push(result);
+	};
+	for (var i = 0; i < count; i++) {
+		Ticket(null,null,null,null, cb);
+	}
+	while (tickets.length !=count) {
+		//console.log('XXXXXXXXXXXX');
+	}
+	callback(null, tickets);
+};
 
 module.exports = function () {
 	return new housie();
