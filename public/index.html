@@ -53,7 +53,7 @@
 			</div>
 			<div>&nbsp;</div>
 			<div>
-			To just print tickets, select the number of tickets : <SELECT id="selTicketCountOffline">
+			To just print tickets and play the game off-line, select the number of tickets : <SELECT id="selTicketCountOffline">
 							<OPTION VALUE=""></OPTION>
 							<OPTION VALUE="10">10</OPTION>
 							<OPTION VALUE="20">20</OPTION>
@@ -70,23 +70,23 @@
 				<h3>Create a new game</h3>
 				<div id="runNew" class="panel2">
 					<span class="noplaceholder">Game Tag</span>
-					<input type="text" id="newTag" name="newTag" placeholder="Game Tag"
+					<input type="text" id="newTag" name="newTag" placeholder="Game Tag" tabindex="1" 
 						value="" size="15"
 						title="Enter a name for the game, which you can easily recall. If you forget this you cannot retrieve the game again.">
 					<button class="helpBtn" onclick="showFormHelp('newTag')">Help</button>
 					<br>
 					<span class="noplaceholder">Admin password</span>
 					<input type="password" id="newAdminPwd"
-						placeholder="Admin password" name="newAdminPwd" value="" size="15"
+						placeholder="Admin password" name="newAdminPwd" value="" size="15" tabindex="2"
 						title="Admin password is needed to run the game, print game tickets and draw the numbers. Do not share it with the players.">
 					<button class="helpBtn" onclick="showFormHelp('newAdminPwd')">Help</button>
 					<br>
 					<span class="noplaceholder">Game password</span>
-					<input type="password" id="newGamePwd" placeholder="Game password"
+					<input type="password" id="newGamePwd" placeholder="Game password" tabindex="3"
 						name="newGamePwd" value="" size="15"
 						title="Game password is needed for players to join a game, get tickets and to follow the game. Once game is created, share it with the players.">
 					<button class="helpBtn" onclick="showFormHelp('newGamePwd')">Help</button>
-					<br> <input type="button" value="Create"
+					<br> <input type="button" value="Create" tabindex="4"
 						onclick="createGame();">
 				</div>
 				<h3>Continue an existing game</h3>
@@ -121,8 +121,7 @@
 							<OPTION VALUE="30">30</OPTION>
 							<OPTION VALUE="40">40</OPTION>
 							<OPTION VALUE="50">50</OPTION>
-						</SELECT> <a href="Javascript:getTicketsForPrint(document.getElementById('selTicketCount').value);">Click here to get
-							tickets </a>
+						</SELECT> and <a href="Javascript:getTicketsForPrint(document.getElementById('selTicketCount').value);">click here.</a>
 					</p>
 				</div>
 				<div id="draw">
@@ -146,29 +145,29 @@
 				<h3>Join a game</h3>
 				<div id="playNew" class="panel2">
 					<span class="noplaceholder">Game Tag</span>
-					<input type="text" placeholder="Game Tag" id="joinTag"
+					<input type="text" placeholder="Game Tag" id="joinTag" tabindex="1"
 						name="joinTag" value="" size="15"
 						title="Enter the tag for the Game you want to join. If you don't know this you, talk to the organizer of the Game.">
 					<button class="helpBtn" onclick="showFormHelp('joinTag')">Help</button>
 					<span class="noplaceholder">Player Name</span>
-					<br> <input type="text" id="joinName" name="joinName" value=""
+					<br> <input type="text" id="joinName" name="joinName" value="" tabindex="2"
 						placeholder="Player Name" size="15"
 						title="Enter your name. Make sure it is unique so that organizer and other players can easily recognize you.">
 					<button class="helpBtn" onclick="showFormHelp('joinName')">Help</button>
 					<br> 
 					<span class="noplaceholder">Player password</span>
 					<input type="password" id="joinPlayerPwd"
-						name="joinPlayerPwd" value="" placeholder="Player Password"
+						name="joinPlayerPwd" value="" placeholder="Player Password" tabindex="3"
 						size="15"
 						title="Player password is optional and can be used to protect the participation in the game.">
 					<button class="helpBtn" onclick="showFormHelp('joinPlayerPwd')">Help</button>
 					<br> 
 					<span class="noplaceholder">Game password</span>					
 					<input type="password" id="joinGamePwd"
-						placeholder="Game Password" name="joinGamePwd" value="" size="15"
+						placeholder="Game Password" name="joinGamePwd" value="" size="15" tabindex="4"
 						title="Game password is needed for players to join a game & get tickets. If you do not know this please contact the organizer.">
 					<button class="helpBtn" onclick="showFormHelp('joinGamePwd')">Help</button>
-					<br> <input type="button" value="Join"
+					<br> <input type="button" value="Join" tabindex="5"
 						onclick="joinGame(true);"> <br>
 				</div>
 				<h3>Continue a game</h3>
