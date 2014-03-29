@@ -126,7 +126,7 @@ h2 {
 
 #numberDisplay {
 	background-color: rgb(225,225,225);
-	font-size: 10em;
+	font-size: 8em;
 	text-align: center;
 	width: 70%;
 	min-height: 90%;
@@ -236,6 +236,12 @@ h2 {
 		width: 280px;
 		height: 280px;
 	}
+	.ticket {
+		font-size: 1.2em;
+	}
+	#numberDisplay {
+		font-size: 10em;		
+	}
 }
 
 @media only screen and (min-width: 481px and max-width:768px) {
@@ -243,12 +249,24 @@ h2 {
 		width: 400px;
 		height: 300px;
 	}
+	.ticket {
+		font-size: 1.3em;
+	}
+	#numberDisplay {
+		font-size: 12em;		
+	}
 }
 
 @media only screen and (min-width: 769px and max-width:960px) {
 	.menu-iframe {
 		width: 650px;
 		height: 400px;
+	}
+	.ticket {
+		font-size: 1.4em;
+	}
+	#numberDisplay {
+		font-size: 16em;		
 	}
 }
 
@@ -262,5 +280,11 @@ h2 {
 	.menu-iframe {
 		width: 800px;
 		height: 550px;
+	}
+	.ticket {
+		font-size: 2em;
+	}
+	#numberDisplay {
+		font-size: 20em;		
 	}
 }
