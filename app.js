@@ -12,8 +12,8 @@ var express = require('express')
  , routes = require('./routes')
  , ss = require('./modules/socket-server');
 
-var app = module.exports = express.createServer()
- ,  io = require('socket.io').listen(app);
+var app = module.exports = express.createServer();
+var io = require('socket.io').listen(app);
 
 // Configuration
 
@@ -45,6 +45,7 @@ routes.init(socketServer);
 app.get('/', routes.index);
 app.post('/creategame/:gameTag', routes.createGame);
 app.post('/drawnumber/:gameTag', routes.drawNumber);
+app.post('/finishGame/:gameTag', routes.finishGame);
 app.post('/validatejoin/:gameTag', routes.validateJoin);
 app.post('/issueticket/:gameTag', routes.issueTicket);
 app.post('/confirmticket/:gameTag', routes.confirmTicket);

@@ -1,4 +1,5 @@
 var socketio;
+var db = require('./dbaccess');
 
 var socketServer = function (io) {
 	socketio = io;
@@ -21,7 +22,11 @@ var socketServer = function (io) {
 		socket.on('chatMessage', function (message) {
 			//console.log(message);
 			//TODO: validation
-			socket.broadcast.to(socket.gameTag).emit('chatMessage', {'sender':socket.player, 'message':message});
+			//save to db
+			var chatMessage = {'game': socket.gameTag, 'timeStamp': new Date(), 'sender':socket.player, 'message':message};
+			db.append('chat', chatMessage);
+			//socket.broadcast.to(socket.gameTag).emit('chatMessage', {'timeStamp': new Date(), 'sender':socket.player, 'message':message});
+			this.broadcast(socket.gameTag, 'chatMessage', chatMessage);
 		});
 	});
 };

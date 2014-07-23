@@ -39,6 +39,15 @@ exports.drawNumber = function(req, res){
 	});
 };
 
+exports.finishGame = function(req,res) {
+	var gameTag = req.params.gameTag;
+	var adminPwd = req.body.adminpwd;
+	housie.finishGame(gameTag, adminPwd, function (err, game) {
+		res.send(err ? err : game);
+		socketio.broadcast(gameTag, 'gameFinished', gameTag);
+	});
+};
+
 exports.validateJoin = function(req, res){
 	var gameTag = req.params.gameTag;
 	console.log(gameTag);

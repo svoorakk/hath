@@ -4,8 +4,6 @@
 "option strict";
 
 var config = require('./configuration');
-//var Datastore = require('./datastore');
-//var db = new Datastore();
 var db = require('./dbaccess');
 var Game = require('./game');
 var Ticket = require('./ticket');
@@ -38,6 +36,18 @@ housie.prototype.drawNumber = function(gameTag, adminPwd, callback) {
 				}
 				callback(err, getGameForPlayer(thisGame));
 			});
+		}	
+	}); 
+};
+
+housie.prototype.finishGame = function(gameTag, adminPwd, callback) {
+	getGameAndValidateAccess(gameTag, 'Admin', adminPwd, null, function(err, game) {
+		if (err || game.error)
+			return callback(err ? err : game);
+		else {
+			game.finished = true;
+			db.put('game', game.gameTag, game);
+			callback(null, getGameForPlayer(game));
 		}	
 	}); 
 };

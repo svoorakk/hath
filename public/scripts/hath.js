@@ -31,8 +31,8 @@ var removeGame = function (game, type) {
 };
 
 var supports_input_placeholder = function () {
-	  var i = document.createElement('input');
-	  return 'placeholder' in i;
+	var i = document.createElement('input');
+	return 'placeholder' in i;
 };
 
 //actions
@@ -104,6 +104,8 @@ var createGame = function() {
 		addGame(game, 'run');
 		setupRunTabs(game);
 		updateStatus('run', game);
+		makeSocketConnection(game, 'run');
+		socket.emit('runGame', { 'gameTag': gameTag, 'gamePwd': gamePwd, 'adminPwd': adPwd });
 	});
 };
 
@@ -122,10 +124,7 @@ var drawNumber = function() {
 			toDialog("Draw Number Error!", (err ? JSON.stringify(err) : game.error));
 			return;
 		}
-		localgame.drawnNumbers = game.drawnNumbers;
-		localgame.pendingNumbers = game.pendingNumbers;
-		localgame.finished = game.finished;
-		localgame.gameStarted = game.gameStarted;
+		localgame = updateLocalGame(localgame, game);
 		addGame(localgame, 'run');
 		var dur = Math.ceil(Math.random()*3000)+2000; //min 2 secs
 		setTimeout(function () {
@@ -133,8 +132,10 @@ var drawNumber = function() {
 			$("#numberDisplay").html(game.number);
 			$("#callDisplay").html(game.numberCall);
 			$("#btnDrawNbr").prop("disabled",false);
-			if (game.finished)
-				toDialog("Game update", "Game completed. All numbers are drawn");			
+			if (game.finished) {
+				$("#btnDrawNbr").prop("disabled",true);
+				$("#btnDrawNbr").text("Game Finished!");
+			}
 		}, dur);
 	});	
 };
@@ -157,10 +158,7 @@ var refreshGame = function (gameTag) {
 			toDialog("Get Game Error!", (err ? JSON.stringify(err) : game.error));
 			return;
 		}
-		localgame.drawnNumbers = game.drawnNumbers;
-		localgame.pendingNumbers = game.pendingNumbers;
-		localgame.finished = game.finished;
-		localgame.gameStarted = game.gameStarted;
+		localgame = updateLocalGame(localgame, game);
 		addGame(localgame, type);
 		updateStatus(type, localgame);
 	});	
@@ -342,7 +340,7 @@ var joinGame = function(New) {
 		toDialog("Error", "Player name is required");
 		return;
 	}
-	
+
 	var url = "validatejoin/"+gameTag;
 	var body = {};
 	body.playername = name;
@@ -350,26 +348,21 @@ var joinGame = function(New) {
 	body.playerpwd = playerPwd;	
 	//display wait animation
 	showWaitDialog();
-	xmlHttpPost(url, JSON.stringify(body), function(err, game) {
+	xmlHttpPost(url, JSON.stringify(body), function(err, newgame) {
 		hideWaitDialog();
-		game = JSON.parse(game);
-		if (err || game.error) {
-			toDialog("Join Game Error!", (err ? JSON.stringify(err) : game.error));
+		newgame = JSON.parse(newgame);
+		if (err || newgame.error) {
+			toDialog("Join Game Error!", (err ? JSON.stringify(err) : newgame.error));
 			return;
 		}
 		//create browser variable
-		game.gamePwd = gamePwd;
-		game.playerName = name;
-		game.playerPwd = playerPwd;	
-		addGame(game, 'play');
-		setupPlayTabs(game);
+		newgame.gamePwd = gamePwd;
+		newgame.playerName = name;
+		newgame.playerPwd = playerPwd;	
+		addGame(newgame, 'play');
+		setupPlayTabs(newgame);
 		activateTab('play', 0);
-		socket = io.connect();
-		socket.on('numberDrawn', function (game) {
-			setTimeout(function () {
-				updateTickets(game.number);
-			}, 5000);
-		});	
+		makeSocketConnection(newgame, 'play');
 		socket.emit('joinGame', { 'gameTag': gameTag, 'gamePwd': gamePwd, playerName: name, playPwd: playerPwd });
 	});
 };
@@ -537,15 +530,15 @@ var updateStats = function () {
 		}
 		stats = JSON.parse(stats);
 		var statsHtml = "<table><tr class='ui-state-default'><td>Numbers Drawn:</td><td>"+stats.numbersDrawnCount
-			+"</td></tr>" + "<tr class='ui-state-default'><td>Numbers Pending:</td><td>" 
-			+ stats.numbersPendingCount+"</td></tr></table>" 
-			+ "Players : <table><tr><td></td><td>Name</td><td>Number of Tickets</td></tr>";
+		+"</td></tr>" + "<tr class='ui-state-default'><td>Numbers Pending:</td><td>" 
+		+ stats.numbersPendingCount+"</td></tr></table>" 
+		+ "Players : <table><tr><td></td><td>Name</td><td>Number of Tickets</td></tr>";
 		var ticketCount = 0;
 		if (!stats.players)
 			stats.players = [];
 		for (var i = 0; i < stats.players.length; i++) {
 			statsHtml = statsHtml + "<tr class='ui-widget-content'><td>"+ (i+1)  + "</td><td>" + stats.players[i].name 
-				+ "</td><td>" + stats.players[i].ticketCount + "</td></tr>";
+			+ "</td><td>" + stats.players[i].ticketCount + "</td></tr>";
 			ticketCount = ticketCount + stats.players[i].ticketCount;
 		}
 		statsHtml = statsHtml + "<tr class='ui-state-default'><td></td><td>" + stats.players.length + " Players</td><td>" + ticketCount + "</td></tr>";  
@@ -571,7 +564,7 @@ var updateLog = function () {
 		var logHtml = "<table class='log'><tr class='ui-widget-content'><td class='log'>Date</td><td class='log'>Event</td><td class='log'>Data</td></tr>";
 		for (var i = log.length-1; i > -1 ; i--) {
 			logHtml = logHtml + "<tr><td>"+ log[i].eventDate  + "</td><td>" + log[i].eventType  
-				+ "</td><td>" + log[i].eventData + "</td></tr>";
+			+ "</td><td>" + log[i].eventData + "</td></tr>";
 		}
 		logHtml = logHtml + "</table>";
 		$("#log").html(logHtml);
@@ -666,4 +659,47 @@ var displayHelp = function() {
 var displayAbout = function() {
 	var message = "<iframe class='menu-iframe' src='toolbar/about.html'></iframe>";
 	toDialog("About", message);
+};
+
+var chatMessage = function () {
+	chatMessage = document.getElementById('chatInput').value;
+	socket.emit('chatMessage', chatMessage);
+	document.getElementById('chatInput').value = "";
+};
+
+var updateChatWindow = function (chatMessage) {
+	chatDisplay = document.getElementById('chatDisplay').innerHTML;
+	var msg = "<br>" + "<span class='chatLabel'>" + chatMessage.timeStamp + ":" + chatMessage.player + ":</span><span class='chatMessage'>" + chatMessage.message + "</span>";
+	document.getElementById('chatDisplay').innerHTML = chatDisplay + msg; 
+};
+
+var updateLocalGame = function (local, server) {
+	local.drawnNumbers = server.drawnNumbers;
+	local.pendingNumbers = server.pendingNumbers;
+	local.finished = server.finished;
+	local.gameStarted = server.gameStarted;
+	return local;
+};
+
+var makeSocketConnection = function (game, type) {
+	socket = io.connect();
+	socket.on('numberDrawn', function (gameinprogress) {
+		var localgame = getGames(type)[gameinprogress.gameTag];
+		localgame = updateLocalGame(localgame, gameinprogress);
+		addGame(localgame, type);
+		setTimeout(function () {
+			updateTickets(gameinprogress.number);
+			if (gameinprogress.finished) {
+				toDialog("Game update", "Game completed. All numbers are drawn");			
+			}
+		}, 5000);
+	});
+	socket.on('chatMessage', function (chatMessage) {
+		updateChatWindow(chatMessage);
+	});
+	if (type === 'play') {
+		socket.on('gameFinished', function (gameTag) {
+			toDialog("Game update", "Game finished ! Either organizer has terminated the game or all numbers have been drawn.");			
+		});
+	}
 };
